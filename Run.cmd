@@ -1,0 +1,2 @@
+lua WowBuildTools.lua
+pause
