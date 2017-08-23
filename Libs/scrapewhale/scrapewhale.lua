@@ -8,6 +8,7 @@
 
 require 'lfs' -- LuaFileSystem
 
+local Scrapewhale = {}
 
 -- Prefix to all files if this script is run from a subdir, for example
 local startDir = ".." -- start scraping here
@@ -94,7 +95,13 @@ local function parseFile(filename)
 end
 
 
-do -- Actual script begins here
+function Scrapewhale:Run(config)
+	print("scrapewhale.Run is being executed")
+end
+
+function Scrapewhale:ScanTemp() -- Actual script begins here
+	print("scrapewhale is running in testing mode")
+	if true then return end
 	
 	ScanDir(startDir) -- Fill scrapeList with entries of files to be parsed
 	
@@ -163,3 +170,6 @@ do -- Actual script begins here
 		end		
 	end
 end
+
+
+return Scrapewhale
