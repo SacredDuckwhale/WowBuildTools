@@ -62,15 +62,15 @@ function WBT:Run(args)
 	assert(projects, "No projects are scheduled to be run. Exiting...")
 	
 	-- Load required modules (if any)
-	for Module, isEnabled in pairs(modules) do -- Check if module is enabled
-		print("Found module: " .. tostring(Module) .. " (Enabled: " .. tostring(isEnabled) .. ")")
+	for moduleName, isEnabled in pairs(modules) do -- Check if module is enabled
+		print("Found module: " .. tostring(moduleName) .. " (Enabled: " .. tostring(isEnabled) .. ")")
 		
 		if isEnabled then -- Load module and parse its config
-			print("Loading module: " .. tostring(Module))
-			local loaderPath = "Modules/" .. tostring(Module) .. "/" .. "Loader.lua"
+			print("Loading module: " .. tostring(moduleName))
+			local loaderPath = "Modules/" .. tostring(moduleName) .. "/" .. "Loader.lua"
 			--local config = assert(loadfile(loaderPath), "Failed to load file: " .. loaderPath)
-			local moduleConfig = Module.Config -- TODO: Is nil because they don't exist yet
-			EnabledModules[#EnabledModules+1] = { name = Module, ranSuccessfully = false } -- TODO: Global WBT.Module and WBT.Module.config
+	--		local moduleConfig = Module.Config -- TODO: Is nil because they don't exist yet
+			EnabledModules[#EnabledModules+1] = { name = moduleName, ranSuccessfully = false } -- TODO: Global WBT.Module and WBT.Module.config
 			
 			-- TODO: Check config for validity
 			
