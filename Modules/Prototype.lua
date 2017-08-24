@@ -1,13 +1,5 @@
 M = {}
 
-
-function M:RunScript(scriptName, ...) -- Every script will do something different with those parameters
-
-	
-	
-
-end
-
 --- Lookup a module's name and return the actual script library/API that is to be used with it
 -- @param moduleName
 -- @return Script name if one exists; "" (empty string) otherwise
