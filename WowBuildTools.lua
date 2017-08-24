@@ -29,15 +29,5 @@ end
 -- Load main module
 WBT = require("WBT")
 
--- Load modules
-WBT.Documentation = require("Modules/Documentation/Loader")
-WBT.CodeStandards = require("Modules/CodeStandards/Loader")
-WBT.Versioning = require("Modules/Versioning/Loader")
-WBT.ChangeLogs = require("Modules/ChangeLogs/Loader")
-WBT.StaticAnalysis = require("Modules/StaticAnalysis/Loader")
-WBT.UnitTests = require("Modules/UnitTests/Loader")
-WBT.CurseForge = require("Modules/CurseForge/Loader")
-WBT.Locales = require("Modules/Locales/Loader")
-
 -- Execute main module
 os.exit( WBT:Load(args) )
