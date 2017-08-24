@@ -43,7 +43,7 @@ end
 
 function WBT:PrintHelp() end
 
-function WBT:Run(args)
+function WBT:Load(args)
 	
 	print("WowBuildTools " .. WBT.version .. " is now running...")
 	

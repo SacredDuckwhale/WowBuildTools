@@ -13,6 +13,7 @@
     -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ----------------------------------------------------------------------------------------------------------------------
 
+--- WBT Loader
 
 -- Read command line arguments
 local args = ...
@@ -25,8 +26,7 @@ function dump(value)
 
 end
 
-
--- Load core
+-- Load main module
 WBT = require("WBT")
 
 -- Load modules
@@ -39,5 +39,5 @@ WBT.UnitTests = require("Modules/UnitTests/Loader")
 WBT.CurseForge = require("Modules/CurseForge/Loader")
 WBT.Locales = require("Modules/Locales/Loader")
 
--- Exit
-os.exit( WBT:Run(args) )
+-- Execute main module
+os.exit( WBT:Load(args) )
