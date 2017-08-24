@@ -46,13 +46,9 @@ function M:Run(moduleName, project, silent)
 	local script = WBT.Modules[moduleName].script
 	if script and script.file == "" then return end -- TODO. Temporary skipping of unfinished modules
 	
-	-- Read script that will be used to build the addon according to the config
-	local scriptFile = "Libs\\" .. script.folder .. "\\" .. script.file .. "." .. script.extension
-	local Script = assert(loadfile(scriptFile), "Failed to load script file: " .. scriptFile)()
-	
-	-- Run script with this configuration
-	_ = not silent and print("Attempting to run script: " .. scriptFile)
-	Script:Run(config)
+	-- Pass everything to the module's script loader (which will call the script according to its settings)
+	_ = not silent and print("Executing script loader for module: " .. moduleName)
+	script:Run(project, config, silent)
 	
 	_ = not silent and print("Module " .. moduleName .. " finished running - successful = " .. tostring(success))
 	return success
