@@ -33,22 +33,22 @@ defaults.ignoredFolders = {}
 
 -- Read CLI args and extract settings (overwrites the default values above)
 local args = { ... }
-dump(args)
+--dump(args)
 if #args > 0 then -- Validate arguments and discard unusable ones
 
 	local param, value
-	print("Detected " .. #args .. " arguments")
+--	print("Detected " .. #args .. " arguments")
 	for index, arg in pairs(args) do -- Compare arg against defaults table structure
 	
 		param, value = arg:match("^-([^%s]+)%s?(.*)$")
-		print(param, value)
+--		print(param, value)
 		-- Split key and value pairs if any are found
 	
-		print("Checking arg " .. index .. ": \"" .. tostring(arg) .. "\"")
+--		print("Checking arg " .. index .. ": \"" .. tostring(arg) .. "\"")
 		if defaults[param] ~= nil then -- Is a valid entry -> Use this setting instead of the default value
 		
 			defaults[param] = value ~= "" and value or true -- Set boolean keys to true, as only enabling parameters are valid (-enableStuff sets defaults.enableStuff = true - if it was false, there'd be no point)
-			print("Argument " .. index .. " with value = \"" .. tostring(defaults[param]) .. "\" will be used")
+--			print("Argument " .. index .. " with value = \"" .. tostring(defaults[param]) .. "\" will be used")
 			
 		else -- use default value
 		
