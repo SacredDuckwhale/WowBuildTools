@@ -22,7 +22,11 @@ local function GetScriptName(moduleName)
 
 end
 
-
+--- Run a module's script with the appropriate configuration parameters
+-- @param moduleName The module's name (NOT the script name, which is found in the module definition file)
+-- @param project The project table, which includes critical information required to run the script on it
+-- @param silent Toggles silent mode, i.e., all output is being muted
+-- @return Boolean indicating whether the script ran without issues (true) or if it was skipped (false)
 function M:Run(moduleName, project, silent)
 	
 	local _ -- Used for silent mode only
