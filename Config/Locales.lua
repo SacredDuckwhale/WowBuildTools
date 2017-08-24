@@ -15,8 +15,8 @@ export = {}
 -- Export settings
 export.enabled = true -- Save scraped results in file (as opposed to simply outputting them)
 export.folder = "Locales" -- This is the folder inside the project directory
-export.file = "enGB" -- The Lua file that will hold the default locale (which is being exported)
-export.extension = "lua"
+export.fileName = "enGB" -- The Lua file that will hold the default locale (which is being exported)
+export.fileType = "lua"
 export.sort = true -- Whether or not the phrases should be sorted
 export.group = true -- Whether or not the phrases should be grouped (by files they were encountered in) -> This will show the file name as a commented group header
 export.removeDuplicates = false -- Whether or not duplicate phrases should be squashed to one line (makes no difference functionally, but when a phrase appears in several files removing them might leave that group empty)
