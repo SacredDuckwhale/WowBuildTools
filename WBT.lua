@@ -53,13 +53,22 @@ function WBT:Load(args)
 	
 	local EnabledModules = {}
 	
+	-- 1. Read global config (to determine which modules to run and how to build projects)
+	
 	-- Read config and store its values for later
 	local GlobalConfig = WBT:ReadConfig()
 	
 	local projects = GlobalConfig.Projects
 	local modules = GlobalConfig.Modules
 	
+	-- TODO: Check format for projects and modules to make sure the entries are valid
+	
 	assert(projects, "No projects are scheduled to be run. Exiting...")
+	assert(modules, "No modules found in global config. Exiting...")
+	
+	-- If those tables are left empty, the modules will abort
+	WBT.Projects = projects or {}
+	WBT.Modules = {}
 	
 	-- Load required modules (if any)
 	for moduleName, isEnabled in pairs(modules) do -- Check if module is enabled
@@ -67,12 +76,9 @@ function WBT:Load(args)
 		
 		if isEnabled then -- Load module and parse its config
 			print("Loading module: " .. tostring(moduleName))
-			local loaderPath = "Modules/" .. tostring(moduleName) .. "/" .. "Loader.lua"
-			--local config = assert(loadfile(loaderPath), "Failed to load file: " .. loaderPath)
-	--		local moduleConfig = Module.Config -- TODO: Is nil because they don't exist yet
-			EnabledModules[#EnabledModules+1] = { name = moduleName, ranSuccessfully = false } -- TODO: Global WBT.Module and WBT.Module.config
-			
-			-- TODO: Check config for validity
+			local moduleFile = "Modules/" .. tostring(moduleName) .. ".lua"
+			WBT.Modules[tostring(moduleName)] = dofile(moduleFile)
+			EnabledModules[#EnabledModules+1] = { name = moduleName, ranSuccessfully = false }
 			
 			-- Config is valid -> store for later use
 		end
@@ -84,8 +90,10 @@ function WBT:Load(args)
 		print("Discovered project: " .. tostring(projectName) .. " (dir: " .. tostring(settings.root) .. ")")
 		for key, enabledModule in pairs(EnabledModules) do -- 
 --dump(enabledModule)
-			Module = WBT[enabledModule.name]
 --dump(WBT)			
+
+			Module = WBT.Modules[enabledModule.name]
+			
 			if not Module or type(Module) ~= "table" or not Module.Run or not type(Module.Run) == "function" then -- Module is invalid (failed to load properly?)
 
 				print("Failed to run module: " .. enabledModule.name .. " - skipping it...")
