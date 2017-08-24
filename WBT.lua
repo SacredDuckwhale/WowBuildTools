@@ -45,16 +45,14 @@ function WBT:PrintHelp() end
 
 function WBT:Load(args)
 	
-	print("WowBuildTools " .. WBT.version .. " is now running...")
+	print("\nWowBuildTools " .. WBT.version .. " is now running...\n")
 	
 	if args then -- Parse arguments (TODO)
 	end
 	
 	local EnabledModules = {}
 	
-	-- 1. Read global config (to determine which modules to run and how to build projects)
-	
-	-- Read config and store its values for later
+	--Read global config (to determine which modules to run and how to build projects)
 	local GlobalConfig = WBT:ReadConfig()
 	
 	local projects = GlobalConfig.Projects
@@ -69,25 +67,30 @@ function WBT:Load(args)
 	WBT.Projects = projects or {}
 	WBT.Modules = {}
 	
+	print("Loading required modules...")
+	
 	-- Load required modules (those that are set to enabled = true in the global config)
 	for moduleName, isEnabled in pairs(modules) do -- Check if module is enabled
-		print("Found module: " .. tostring(moduleName) .. " (Enabled: " .. tostring(isEnabled) .. ")")
+	--	print("Found module: " .. tostring(moduleName) .. " (Enabled: " .. tostring(isEnabled) .. ")")
 		
 		if isEnabled then -- Load module and parse its config
 		
 			print("Loading module: " .. tostring(moduleName))
+			
 			local moduleFile = "Modules/" .. tostring(moduleName) .. ".lua"
-			WBT.Modules[tostring(moduleName)] = dofile(moduleFile)
+			WBT.Modules[tostring(moduleName)] = assert(dofile(moduleFile), "Failed to load module in file: " .. moduleFile)
 			EnabledModules[#EnabledModules+1] = { name = moduleName, ranSuccessfully = false }
 			
 		end
 		
 	end
 	
+	print("Finished loading " .. #EnabledModules .. " module" .. (#EnabledModules > 1 and "s" or ""))
+	
 	-- Build projects (by running all the enabled modules for them individually)
 	for projectName, settings in pairs(projects) do -- Check if project is valid
 	
-		print("Discovered project: " .. tostring(projectName) .. " (dir: " .. tostring(settings.root) .. ")")
+		print("\nDiscovered project: " .. tostring(projectName) .. " (" .. tostring(settings.root) .. ")")
 		for key, enabledModule in pairs(EnabledModules) do -- 
 
 			Module = WBT.Modules[enabledModule.name]
@@ -99,26 +102,27 @@ function WBT:Load(args)
 
 			else -- Run module for this project
 			
-				print("Running module " .. tostring(enabledModule.name) .. "...")
+				print("\nRunning module: " .. tostring(enabledModule.name) .. "...")
 				-- TODO: Return whether or not it was successful (a successful build should be defined as a) not having any errors or b) according to user-defined criteria in global config)
 				enabledModule.ranSuccessfully = Module:Run(true) -- TODO: args = silent (to suppress output)
-			
+				assert(enabledModule.ranSuccessfully, "Unable to finish running module " .. enabledModule.name .. " because there were errors. Exiting...") -- Module encountered an error
+				
 			end
+			
 		end
 		
-		-- Print summary
-	
-		print("Finished running " .. # EnabledModules .. " modules while building project ".. projectName .. "\nSummary:")
+		-- Print summary (TODO: Count skipped modules and continue building the others, instead of exiting with an error? Maybe depends on settings, as in: if buildStrict -> abort (to prevent untested builds), otherwise skip and proceed?)
+		print("\nFinished building project ".. projectName .. " (successfully ran " .. #EnabledModules .. " module" .. (#EnabledModules > 1 and "s" or "") .. ")\n\nSummary:")
 		for k, v in pairs(EnabledModules) do 
+		
 			print(tostring(k) .. ". " .. tostring(v.name) .. ": " .. tostring((v.ranSuccessfully and "Done") or "Skipped"))
+		
 		end
 		
 	end
 	
-
+	print("\nFinished building all projects. Have a good day!")
 	
-
-		
 end
 
 return WBT
