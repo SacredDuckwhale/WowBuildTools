@@ -47,14 +47,14 @@ Projects = {
 
 --- These are the modules that should be executed. Note that this will be overwritten by command line arguments where necessary
 Modules = {
-	["ChangeLogs"] = false,
-	["CodeStandards"] = false,
-	["CurseForge"] = false,
-	["Documentation"] = false,
+	["ChangeLogs"] = true,
+	["CodeStandards"] = true,
+	["CurseForge"] = true,
+	["Documentation"] = true,
 	["Locales"] = true,
-	["StaticAnalysis"] = false,
-	["UnitTests"] = false,
-	["Versioning"] = false,
+	["StaticAnalysis"] = true,
+	["UnitTests"] = true,
+	["Versioning"] = true,
 }
 
 
