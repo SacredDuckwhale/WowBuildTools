@@ -67,7 +67,7 @@ function WBT:Load(args)
 	WBT.Projects = projects or {}
 	WBT.Modules = {}
 	
-	print("Loading required modules...")
+	print("Loading modules...")
 	
 	-- Load required modules (those that are set to enabled = true in the global config)
 	for moduleName, isEnabled in pairs(modules) do -- Check if module is enabled
@@ -93,21 +93,8 @@ function WBT:Load(args)
 		print("\nDiscovered project: " .. tostring(projectName) .. " (" .. tostring(settings.root) .. ")")
 		for key, enabledModule in pairs(EnabledModules) do -- 
 
-			Module = WBT.Modules[enabledModule.name]
-			
-			if not Module or type(Module) ~= "table" or not Module.Run or not type(Module.Run) == "function" then -- Module is invalid (failed to load properly?)
-
-				print("Failed to run module: " .. enabledModule.name .. " - skipping it...")
-				enabledModule.ranSuccessfully = false
-
-			else -- Run module for this project
-			
-				print("\nRunning module: " .. tostring(enabledModule.name) .. "...")
-				-- TODO: Return whether or not it was successful (a successful build should be defined as a) not having any errors or b) according to user-defined criteria in global config)
-				enabledModule.ranSuccessfully = Module:Run(true) -- TODO: args = silent (to suppress output)
-				assert(enabledModule.ranSuccessfully, "Unable to finish running module " .. enabledModule.name .. " because there were errors. Exiting...") -- Module encountered an error
-				
-			end
+			local Module = assert(dofile("Modules/Prototype.lua", "Failed to load prototype module"))
+			enabledModule.ranSuccessfully = Module:Run(enabledModule.name, settings, false) -- Pass all necessary data to the generalized Module class, which will then start each script with its respective configuration and required arguments
 			
 		end
 		
