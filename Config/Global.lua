@@ -12,7 +12,7 @@
     -- You should have received a copy of the GNU General Public License
     -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ----------------------------------------------------------------------------------------------------------------------
-
+--TODO: Add License text to file headers
 --- 
 -- @module WBT
 
@@ -47,12 +47,12 @@ Projects = {
 
 --- These are the modules that should be executed. Note that this will be overwritten by command line arguments where necessary
 Modules = {
-	["ChangeLogs"] = true,
+	["ChangeLogs"] = false,
 	["CodeStandards"] = false,
 	["CurseForge"] = false,
 	["Documentation"] = false,
 	["Locales"] = true,
-	["StaticAnalysis"] = true,
+	["StaticAnalysis"] = false,
 	["UnitTests"] = false,
 	["Versioning"] = false,
 }

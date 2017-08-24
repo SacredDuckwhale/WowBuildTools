@@ -31,7 +31,7 @@ function WBT:BuildAll() end
 
 function WBT:ReadConfig()
 
-	local GlobalConfig = require("GlobalConfig")
+	local GlobalConfig = assert(dofile("Config/Global.lua"), "Failed to load global config")
 	
 	-- Check if global config is valid here
 	
