@@ -47,8 +47,7 @@ function WBT:Load(args)
 	
 	print("WowBuildTools " .. WBT.version .. " is now running...")
 	
-	if args then
-		-- Parse arguments (TODO)
+	if args then -- Parse arguments (TODO)
 	end
 	
 	local EnabledModules = {}
@@ -70,27 +69,26 @@ function WBT:Load(args)
 	WBT.Projects = projects or {}
 	WBT.Modules = {}
 	
-	-- Load required modules (if any)
+	-- Load required modules (those that are set to enabled = true in the global config)
 	for moduleName, isEnabled in pairs(modules) do -- Check if module is enabled
 		print("Found module: " .. tostring(moduleName) .. " (Enabled: " .. tostring(isEnabled) .. ")")
 		
 		if isEnabled then -- Load module and parse its config
+		
 			print("Loading module: " .. tostring(moduleName))
 			local moduleFile = "Modules/" .. tostring(moduleName) .. ".lua"
 			WBT.Modules[tostring(moduleName)] = dofile(moduleFile)
 			EnabledModules[#EnabledModules+1] = { name = moduleName, ranSuccessfully = false }
 			
-			-- Config is valid -> store for later use
 		end
 		
 	end
 	
+	-- Build projects (by running all the enabled modules for them individually)
 	for projectName, settings in pairs(projects) do -- Check if project is valid
 	
 		print("Discovered project: " .. tostring(projectName) .. " (dir: " .. tostring(settings.root) .. ")")
 		for key, enabledModule in pairs(EnabledModules) do -- 
---dump(enabledModule)
---dump(WBT)			
 
 			Module = WBT.Modules[enabledModule.name]
 			
@@ -108,19 +106,9 @@ function WBT:Load(args)
 			end
 		end
 		
-		-- rootDir = assert(io.open(root), "Could not open " .. root)
-		-- if not rootDir then -- No such directory
-			
-		-- end
-		-- settings are valid -> run modules for this project
-		
-		-- settings are invalid -> exit with error message
-		
-		-- Run enabled modules
-		
 		-- Print summary
 	
-		print("Built " .. projectName .. " running " .. # EnabledModules .. " modules")
+		print("Finished running " .. # EnabledModules .. " modules while building project ".. projectName .. "\nSummary:")
 		for k, v in pairs(EnabledModules) do 
 			print(tostring(k) .. ". " .. tostring(v.name) .. ": " .. tostring((v.ranSuccessfully and "Done") or "Skipped"))
 		end
