@@ -36,7 +36,7 @@ function M:Run(moduleName, project, silent)
 	_ = not silent and print("Module " .. moduleName .. " is running with path " .. tostring(root) .. " - excluding " .. #exclusions .. " files")
 	local success = true
 	
-	_ = not silent and print("Module is running in verbose mode")
+	--_ = not silent and print("Module is running in verbose mode")
 	
 	-- Read config for this module
 	local configFile = "Config/" .. moduleName .. ".lua"
@@ -50,7 +50,7 @@ function M:Run(moduleName, project, silent)
 	_ = not silent and print("Executing script loader for module: " .. moduleName)
 	script:Run(project, config, silent)
 	
-	_ = not silent and print("Module " .. moduleName .. " finished running - successful = " .. tostring(success))
+	_ = not silent and print("Module " .. moduleName .. " finished running  (success = " .. tostring(success) .. ")")
 	return success
 	
 end
