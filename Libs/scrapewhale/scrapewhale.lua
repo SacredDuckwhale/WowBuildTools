@@ -10,15 +10,54 @@ require 'lfs' -- LuaFileSystem
 
 local Scrapewhale = {}
 
--- Prefix to all files if this script is run from a subdir, for example
-local startDir = ".." -- start scraping here
-local filePrefix = startDir .. "/" -- TODO
+local defaults = {}
 
--- Export settings
-local enableExport = true
-local exportFolder = "Locales/"  -- relative to startDir
-local renameTo = "enGB.lua" -- Careful: Will overwrite stuff without asking
-local prefixString = [[local L = LibStub("AceLocale-3.0"):NewLocale("TotalAP", "enGB", true)]]
+
+-- Parser settings (defaults)
+defaults.startDir = ".." -- start scraping here
+defaults.useSquareBrackets = true -- TODO
+defaults.localizationTable = "L" -- TODO
+
+-- Export settings (defaults)
+defaults.enableExport = true
+defaults.exportFolder = "Locales/"  -- relative to startDir
+defaults.renameTo = "enGB.lua" -- Careful: Will overwrite stuff without asking (TODO: config option to save a copy?)
+defaults.exportFileType = "lua"
+defaults.sortByName = true
+defaults.groupByFile = true
+defaults.purgeDuplicateEntries = false -- TODO
+defaults.prefixString = [[local L = LibStub("AceLocale-3.0"):NewLocale("TotalAP", "enGB", true)]]
+defaults.suffixString = ""
+
+defaults.ignoredFolders = {}
+
+-- Read CLI args and extract settings (overwrites the default values above)
+local args = { ... }
+dump(args)
+if #args > 0 then -- Validate arguments and discard unusable ones
+
+	local param, value
+	print("Detected " .. #args .. " arguments")
+	for index, arg in pairs(args) do -- Compare arg against defaults table structure
+	
+		param, value = arg:match("^-([^%s]+)%s?(.*)$")
+		print(param, value)
+		-- Split key and value pairs if any are found
+	
+		print("Checking arg " .. index .. ": \"" .. tostring(arg) .. "\"")
+		if defaults[param] ~= nil then -- Is a valid entry -> Use this setting instead of the default value
+		
+			defaults[param] = value ~= "" and value or true -- Set boolean keys to true, as only enabling parameters are valid (-enableStuff sets defaults.enableStuff = true - if it was false, there'd be no point)
+			print("Argument " .. index .. " with value = \"" .. tostring(defaults[param]) .. "\" will be used")
+			
+		else -- use default value
+		
+			--print("Ignoring arg " .. index .. " because it was invalid")
+			
+		end
+	end
+	
+end
 
 
 -- CurseForge namespaces (if several are to be used)
@@ -32,6 +71,10 @@ local ignoredFolders = {
 	"Libs/",
 	"Locales/",
 }
+ignoredFolders = defaults.ignoredFolders -- TODO
+
+-- Prefix to all files if this script is run from a subdir, for example
+local filePrefix = defaults.startDir .. "/" -- TODO
 
 
 local ignoreList = {} -- Folders that are to be ignored
