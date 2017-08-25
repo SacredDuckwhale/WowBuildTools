@@ -189,7 +189,7 @@ function Scrapewhale:Run() -- Actual script begins here
 			local ns_cmp_file = assert(io.open(namespace .. "_Import.lua", "r"), "Error opening file")
 			local writeStr = ns_cmp_file:read("*all")
 		
-			local exportFile = assert(io.open(exportFilePath, "w"), "Error opening file")
+			local exportFile = assert(io.open(exportFilePath, "w"), "Error opening export file: " .. exportFilePath)
 			exportFile:write(settings.prefixString, "\n\n", writeStr, "\n\n", settings.suffixString)
 			exportFile:close()	
 		end		
