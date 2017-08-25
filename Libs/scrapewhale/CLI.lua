@@ -23,7 +23,7 @@ local silentMode = true
 -- Upvalues
 local luaprint = print
 
---- Helper function to print more concise debug messages
+--- Helper function to print (somewhat) customised debug messages
 local function print(...)
 	
 	if not silentMode then
