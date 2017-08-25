@@ -40,10 +40,7 @@ local namespaces = {
 }
 
 
-for folderName in string.gmatch("([^%s]+);?", settings.ignoredFolders) do
-	ignoredFolders  = folderName
-end
-dump(ignoredFolders)
+--dump(ignoredFolders)
 -- Prefix to all files if this script is run from a subdir, for example
 local filePrefix = settings.startDir .. "/" -- TODO
 
@@ -52,11 +49,9 @@ local ignoreList = {} -- Folders that are to be ignored
 local scrapeList = {} -- Files that will be scraped
 local phrases = {} -- Which phrases will be exported
 
-
- -- Mark folders as "ignored" and build the "ignore list"
- for key, value in ipairs(ignoredFolders) do
-	print(key, value)
-	ignoreList[value] = true
+-- Split parameter to extract ignored folder names
+for folderName in string.gmatch("([^%s]+);?", settings.ignoredFolders) do  -- Mark folders as "ignored" and build the "ignore list"
+	ignoreList[folderName] = true
 end
 
 -- Workaround because Lua patterns can't do | (regexp syntax) and I'm not installing a separate library just for this
