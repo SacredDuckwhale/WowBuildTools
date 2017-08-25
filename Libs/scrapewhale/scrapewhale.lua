@@ -107,10 +107,11 @@ local function parseFile(filename)
     return strings
 end
 
+local args = { ... }
 --- Read CLI args and extract settings (overwrites the default values)
 function Scrapewhale:ParseArguments()
 
-	local args = { ... }
+	local args = args or {}
 	local parameters = CLI:ParseArguments(args)
 
 	if parameters then -- Validate arguments and discard unusable ones
@@ -128,7 +129,7 @@ end
 function Scrapewhale:Run() -- Actual script begins here
 
 	-- Read parameters from CLI
-	ParseArguments()
+	Scrapewhale:ParseArguments()
 
 	ScanDir(settings.startDir) -- Fill scrapeList with entries of files to be parsed
 	
