@@ -6,8 +6,9 @@
 -- TODO: What about the TOC namespace? (might as well leave that be for now)
 -- -----
 
-require 'lfs' -- LuaFileSystem
-local CLI = dofile("Libs/scrapewhale/CLI.lua")
+local lfs = require("lfs") -- LuaFileSystem
+local CLI = loadfile("Libs/scrapewhale/CLI.lua") or loadfile("CLI.lua")
+CLI = CLI()
 
 local Scrapewhale = {}
 
