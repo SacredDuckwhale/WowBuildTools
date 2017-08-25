@@ -10,26 +10,26 @@ require 'lfs' -- LuaFileSystem
 
 local Scrapewhale = {}
 
-local defaults = {}
+local settings = {}
 
 
 -- Parser settings (defaults)
-defaults.startDir = ".." -- start scraping here
-defaults.useSquareBrackets = true -- TODO
-defaults.localizationTable = "L" -- TODO
+settings.startDir = ".." -- start scraping here
+settings.useSquareBrackets = true -- TODO
+settings.localizationTable = "L" -- TODO
 
 -- Export settings (defaults)
-defaults.enableExport = true
-defaults.exportFolder = "Locales/"  -- relative to startDir
-defaults.renameTo = "enGB.lua" -- Careful: Will overwrite stuff without asking (TODO: config option to save a copy?)
-defaults.exportFileType = "lua"
-defaults.sortByName = true
-defaults.groupByFile = true
-defaults.purgeDuplicateEntries = false -- TODO
-defaults.prefixString = [[local L = LibStub("AceLocale-3.0"):NewLocale("TotalAP", "enGB", true)]]
-defaults.suffixString = ""
+settings.enableExport = true
+settings.exportFolder = "Locales\\"  -- relative to startDir
+settings.renameTo = "enGB" -- Careful: Will overwrite stuff without asking (TODO: config option to save a copy?)
+settings.exportFileType = "lua"
+settings.sortByName = true -- TODO
+settings.groupByFile = true -- TODO
+settings.purgeDuplicateEntries = false -- TODO
+settings.prefixString = [[local L = LibStub("AceLocale-3.0"):NewLocale("TotalAP", "enGB", true)]] -- TODO
+settings.suffixString = "" -- TODO
 
-defaults.ignoredFolders = {}
+settings.ignoredFolders = {}
 
 -- Read CLI args and extract settings (overwrites the default values above)
 local args = { ... }
@@ -41,14 +41,17 @@ if #args > 0 then -- Validate arguments and discard unusable ones
 	for index, arg in pairs(args) do -- Compare arg against defaults table structure
 	
 		param, value = arg:match("^-([^%s]+)%s?(.*)$")
---		print(param, value)
-		-- Split key and value pairs if any are found
-	
---		print("Checking arg " .. index .. ": \"" .. tostring(arg) .. "\"")
-		if defaults[param] ~= nil then -- Is a valid entry -> Use this setting instead of the default value
+		print(param, value)
 		
-			defaults[param] = value ~= "" and value or true -- Set boolean keys to true, as only enabling parameters are valid (-enableStuff sets defaults.enableStuff = true - if it was false, there'd be no point)
---			print("Argument " .. index .. " with value = \"" .. tostring(defaults[param]) .. "\" will be used")
+		-- Split values if several are concatenated (list of ignored folders)
+		
+		
+		-- Split key and value pairs if any are found
+		print("Checking arg " .. index .. ": \"" .. tostring(arg) .. "\"")
+		if settings[param] ~= nil then -- Is a valid entry -> Use this setting instead of the default value
+		
+			settings[param] = value ~= "" and value or true -- Set boolean keys to true, as only enabling parameters are valid (-enableStuff sets settings.enableStuff = true - if it was false, there'd be no point)
+--			print("Argument " .. index .. " with value = \"" .. tostring(settings[param]) .. "\" will be used")
 			
 		else -- use default value
 		
@@ -71,10 +74,12 @@ local ignoredFolders = {
 	"Libs/",
 	"Locales/",
 }
-ignoredFolders = defaults.ignoredFolders -- TODO
-
+for folderName in string.gmatch("([^%s]+);?", settings.ignoredFolders) do
+	ignoredFolders  = folderName
+end
+dump(ignoredFolders)
 -- Prefix to all files if this script is run from a subdir, for example
-local filePrefix = defaults.startDir .. "/" -- TODO
+local filePrefix = settings.startDir .. "/" -- TODO
 
 
 local ignoreList = {} -- Folders that are to be ignored
@@ -84,15 +89,15 @@ local phrases = {} -- Which phrases will be exported
 
  -- Mark folders as "ignored" and build the "ignore list"
  for key, value in ipairs(ignoredFolders) do
-	--print(key, value)
+	print(key, value)
 	ignoreList[value] = true
 end
 
 -- Workaround because Lua patterns can't do | (regexp syntax) and I'm not installing a separate library just for this
 local function MatchesIgnorelistEntry(str)
-	--	print(str)
+--		print(str)
 	for k, v in pairs(ignoreList) do
-	--	print("Test for match of str " .. str .. " with k =  " .. k)
+--		print("Test for match of str " .. str .. " with k =  " .. k)
 		if string.find(str, k) then return true end
 	end
 	
@@ -107,7 +112,7 @@ local function ScanDir(path)
             local f = path..'/'..file
 	
 			if string.match(file, ".lua$") and not MatchesIgnorelistEntry(f) then -- Is a valid file for scraping
-				--print ("\tAdding file to the scrape list: "..f)
+			--	print ("\tAdding file to the scrape list: "..f)
 				table.insert(scrapeList, f)
 			else
 				--print("Ignored file (not a .lua file): " .. file)
@@ -138,15 +143,9 @@ local function parseFile(filename)
 end
 
 
-function Scrapewhale:Run(config)
-	print("scrapewhale.Run is being executed")
-end
+function Scrapewhale:Run() -- Actual script begins here
 
-function Scrapewhale:ScanTemp() -- Actual script begins here
-	print("scrapewhale is running in testing mode")
-	if true then return end
-	
-	ScanDir(startDir) -- Fill scrapeList with entries of files to be parsed
+	ScanDir(settings.startDir) -- Fill scrapeList with entries of files to be parsed
 	
 	-- extract data from specified lua files
 	for _, namespace in ipairs(namespaces) do
@@ -156,7 +155,7 @@ function Scrapewhale:ScanTemp() -- Actual script begins here
 
 		for _, file in ipairs(scrapeList) do  -- Check for .lua files in this directory
 			
-			print("\nParsing file: " .. file)
+		--	print("\nParsing file: " .. file)
 			
 			local strings = parseFile(file)
 
@@ -170,11 +169,11 @@ function Scrapewhale:ScanTemp() -- Actual script begins here
 				ns_file:write(string.format("-- %s (%d phrases)\n", string.gsub(file, "", ""), #sorted))
 				for _, v in ipairs(sorted) do
 					--print("Writing file, set for index " .. v .. " = true")
-					ns_file:write(string.format("L[\"%s\"] = true\n", v))
+					ns_file:write(string.format(settings.localizationTable .. "[\"%s\"] = true\n", v)) -- TODO: squareBrackets setting
 				end
 				ns_file:write("\n")
 			end
-			print("  (" .. #sorted .. ") " .. file)
+			--print("  (" .. #sorted .. ") " .. file)
 		end
 		ns_file:close()
 		
@@ -188,11 +187,12 @@ function Scrapewhale:ScanTemp() -- Actual script begins here
 			table.insert(phrases, k)
 		end
 		table.sort(phrases)
+	--	if settings.sortByName then table.sort(phrases) end
 		
 		-- Write ALL phrases to compare with CF export
 		if #phrases > 0 then
 			for k, v in ipairs(phrases) do 
-				ns_cmp_file:write(string.format("L[\"%s\"] = true\n", v))
+				ns_cmp_file:write(string.format(settings.localizationTable .. "[\"%s\"] = true\n", v)) -- TODO: squareBrackets setting
 			end
 		end
 		
@@ -200,19 +200,20 @@ function Scrapewhale:ScanTemp() -- Actual script begins here
 		print("\nFinished scraping " .. #scrapeList .. " files for a total of " .. #phrases .. " phrases")
 		
 		-- Export to Locales/ folder (or elsewhere, I guess)
-		if enableExport then 
-			local exportFilePath = startDir .. "/" .. exportFolder .. "/" .. renameTo
+		if settings.enableExport then 
+			local exportFilePath = settings.startDir .. "\\" .. settings.exportFolder .. "\\" .. settings.renameTo .. "." .. settings.exportFileType
 			print("\nExporting scraped phrases to " .. exportFilePath)
 			ns_cmp_file:close()
 			local ns_cmp_file = assert(io.open(namespace .. "_Import.lua", "r"), "Error opening file")
 			local writeStr = ns_cmp_file:read("*all")
 		
 			local exportFile = assert(io.open(exportFilePath, "w"), "Error opening file")
-			exportFile:write(prefixString, "\n\n", writeStr)
+			exportFile:write(settings.prefixString, "\n\n", writeStr, "\n\n", settings.suffixString)
 			exportFile:close()	
 		end		
 	end
 end
 
+Scrapewhale:Run()
 
 return Scrapewhale

@@ -37,7 +37,7 @@ function script:Run(project, config, silent)
 
 	args.localizationTable = config.parser.localizationTable
 	args.useSquareBrackets = config.parser.useSquareBrackets
-	args.ignoredFolders = config.ignoreFolders
+	args.ignoredFolders = config.parser.ignoreFolders
 	
 	args.startDir = project.root
 	
@@ -49,7 +49,15 @@ function script:Run(project, config, silent)
 		and not (type(v) == "string" and v == "") -- empty strings need not be passed either
 		then -- Is a valid argument and should be passed
 		
-			params[#params+1] = "-" .. k ..  (type(v) ~= "boolean" and (" " .. v) or "") -- remove boolean values even if they are true to get the -key syntax
+			if type(v) == "table" then -- Concatenate table entries (will be ignoredFolders) -> -key value1;value2;...;valueN
+				
+				params[#params+1] = "-" .. k .. " " .. table.concat(v, ";")
+				
+			else -- Concatenate as -key value
+		
+				params[#params+1] = "-" .. k ..  (type(v) ~= "boolean" and (" " .. v) or "") -- remove boolean values even if they are true to get the -key syntax
+			
+			end
 		
 		end
 		

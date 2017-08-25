@@ -16,9 +16,9 @@ export = {}
 parser.localizationTable = "L" -- Name of the localization table (usually, this is simply "L")
 parser.useSquareBrackets = true -- Whether or not square brackets notation should be read
 parser.ignoreFolders = { -- Folders that should not be scraped
-	"_DEV/",
-	"Libs/",
-	"Locales/",
+	"_DEV",
+	"Libs",
+	"Locales",
 }
 -- TODO: parser.useDotNotation = false -- Whether or not nested tables separated by a dot should be read (.e.g, L.PHRASE_KEY) -- may need special handling to replace constants with strings
 
