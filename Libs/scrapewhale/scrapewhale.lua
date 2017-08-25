@@ -7,6 +7,7 @@
 -- -----
 
 require 'lfs' -- LuaFileSystem
+local CLI = dofile("Libs/scrapewhale/CLI.lua")
 
 local Scrapewhale = {}
 
@@ -29,38 +30,7 @@ settings.purgeDuplicateEntries = false -- TODO
 settings.prefixString = [[local L = LibStub("AceLocale-3.0"):NewLocale("TotalAP", "enGB", true)]] -- TODO
 settings.suffixString = "" -- TODO
 
-settings.ignoredFolders = {}
-
--- Read CLI args and extract settings (overwrites the default values above)
-local args = { ... }
---dump(args)
-if #args > 0 then -- Validate arguments and discard unusable ones
-
-	local param, value
---	print("Detected " .. #args .. " arguments")
-	for index, arg in pairs(args) do -- Compare arg against defaults table structure
-	
-		param, value = arg:match("^-([^%s]+)%s?(.*)$")
-		print(param, value)
-		
-		-- Split values if several are concatenated (list of ignored folders)
-		
-		
-		-- Split key and value pairs if any are found
-		print("Checking arg " .. index .. ": \"" .. tostring(arg) .. "\"")
-		if settings[param] ~= nil then -- Is a valid entry -> Use this setting instead of the default value
-		
-			settings[param] = value ~= "" and value or true -- Set boolean keys to true, as only enabling parameters are valid (-enableStuff sets settings.enableStuff = true - if it was false, there'd be no point)
---			print("Argument " .. index .. " with value = \"" .. tostring(settings[param]) .. "\" will be used")
-			
-		else -- use default value
-		
-			--print("Ignoring arg " .. index .. " because it was invalid")
-			
-		end
-	end
-	
-end
+settings.ignoredFolders = "" -- Folders that should not be scraped, given as a comma-separated list (folder1;folder2;...;folderN)
 
 
 -- CurseForge namespaces (if several are to be used)
@@ -68,12 +38,7 @@ local namespaces = {
     "Base",
 }
 
--- Folders that should not be scraped
-local ignoredFolders = {
-	"_DEV/",
-	"Libs/",
-	"Locales/",
-}
+
 for folderName in string.gmatch("([^%s]+);?", settings.ignoredFolders) do
 	ignoredFolders  = folderName
 end
@@ -142,8 +107,28 @@ local function parseFile(filename)
     return strings
 end
 
+--- Read CLI args and extract settings (overwrites the default values)
+function Scrapewhale:ParseArguments()
+
+	local args = { ... }
+	local parameters = CLI:ParseArguments(args)
+
+	if parameters then -- Validate arguments and discard unusable ones
+		for k, v in pairs(parameters) do -- Check if this key exists in the default settings (which means it is valid)
+			--print(k, v)
+			if settings[k] and v ~= "" then -- Overwrite default with the command line argument
+				--print("Overwriting default settings for key = " .. tostring(k) .. " with CLI parameter v = " .. tostring(v) .. " (was: " .. type(settings[k]) .. " = \"" .. tostring(settings[k]) .. "\")")
+				settings[k] = v
+			end
+		end
+	end
+
+end
 
 function Scrapewhale:Run() -- Actual script begins here
+
+	-- Read parameters from CLI
+	ParseArguments()
 
 	ScanDir(settings.startDir) -- Fill scrapeList with entries of files to be parsed
 	
