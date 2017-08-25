@@ -6,13 +6,21 @@
 -- TODO: What about the TOC namespace? (might as well leave that be for now)
 -- -----
 
+-- Libraries
 local lfs = require("lfs") -- LuaFileSystem
 local CLI = loadfile("Libs/scrapewhale/CLI.lua") or loadfile("CLI.lua")
 CLI = CLI()
 
-local Scrapewhale = {}
 
-local settings = {}
+-- Script data structures
+local Scrapewhale = {}
+local settings = {} -- Current settings (read from the CLI), or default settings (if no parameters were given)
+
+local ignoreList = {} -- Folders that are to be ignored
+local scrapeList = {} -- Files that will be scraped
+local phrases = {} -- Which phrases will be exported
+
+local args = { ... }
 
 
 -- Parser settings (defaults)
@@ -45,13 +53,28 @@ local namespaces = {
 local filePrefix = settings.startDir .. "/" -- TODO
 
 
-local ignoreList = {} -- Folders that are to be ignored
-local scrapeList = {} -- Files that will be scraped
-local phrases = {} -- Which phrases will be exported
+--- Prepare internal data structures for parsing and scraping according to the currently active settings
+-- This should be run before parsing, obviously
+function Scrapewhale:Init()
 
--- Split parameter to extract ignored folder names
-for folderName in string.gmatch("([^%s]+);?", settings.ignoredFolders) do  -- Mark folders as "ignored" and build the "ignore list"
-	ignoreList[folderName] = true
+	-- Read CLI args and extract settings (overwrites the default values)
+	local args = args or {}
+	local parameters = CLI:ParseArguments(args)
+	if parameters then -- Validate arguments and discard unusable ones
+		for k, v in pairs(parameters) do -- Check if this key exists in the default settings (which means it is valid)
+			--print(k, v)
+			if settings[k] and v ~= "" then -- Overwrite default with the command line argument
+				--print("Overwriting default settings for key = " .. tostring(k) .. " with CLI parameter v = " .. tostring(v) .. " (was: " .. type(settings[k]) .. " = \"" .. tostring(settings[k]) .. "\")")
+				settings[k] = v
+			end
+		end
+	end
+
+	-- Split ignored folders parameter to extract ignored folder names (as it can contain several folders in just one CLI argument)
+	for folderName in string.gmatch("([^%s]+);?", settings.ignoredFolders) do  -- Mark folders as "ignored" and build the "ignore list"
+		ignoreList[folderName] = true
+	end
+
 end
 
 -- Workaround because Lua patterns can't do | (regexp syntax) and I'm not installing a separate library just for this
@@ -103,29 +126,10 @@ local function parseFile(filename)
     return strings
 end
 
-local args = { ... }
---- Read CLI args and extract settings (overwrites the default values)
-function Scrapewhale:ParseArguments()
-
-	local args = args or {}
-	local parameters = CLI:ParseArguments(args)
-
-	if parameters then -- Validate arguments and discard unusable ones
-		for k, v in pairs(parameters) do -- Check if this key exists in the default settings (which means it is valid)
-			--print(k, v)
-			if settings[k] and v ~= "" then -- Overwrite default with the command line argument
-				--print("Overwriting default settings for key = " .. tostring(k) .. " with CLI parameter v = " .. tostring(v) .. " (was: " .. type(settings[k]) .. " = \"" .. tostring(settings[k]) .. "\")")
-				settings[k] = v
-			end
-		end
-	end
-
-end
-
 function Scrapewhale:Run() -- Actual script begins here
 
-	-- Read parameters from CLI
-	Scrapewhale:ParseArguments()
+	-- Read parameters from CLI and prepare internal storage tables
+	Scrapewhale:Init()
 
 	ScanDir(settings.startDir) -- Fill scrapeList with entries of files to be parsed
 	
