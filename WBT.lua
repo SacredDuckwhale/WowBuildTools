@@ -33,9 +33,11 @@ function WBT:ReadConfig()
 
 	local GlobalConfig = assert(dofile("Config/Global.lua"), "Failed to load global config")
 	
-	-- Check if global config is valid here
-	
-	-- Check if individual module configs are valid here
+	-- TODO: (not here)
+	-- Check if global config is valid here (TODO)
+	-- Count skipped modules (TODO)
+	-- Start module scripts in separate process and return true/false if they succeed/fail?
+	-- Check if individual module configs are valid here (not here, but still TODO)
 	
 	return GlobalConfig
 	

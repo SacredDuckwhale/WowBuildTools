@@ -9,7 +9,7 @@ export = {}
 -- Edit stuff below
 ----------------------------------------------------------------------------------------------------------------------
 
--- TODO: Default values - can be overwritten by CLI args
+-- TODO: Default values - can be overwritten by CLI args (move them to the script as well? It can't rely on them always being supplied by CLI)
 -- TODO: Move comments to README.MD
 
 -- Parser settings

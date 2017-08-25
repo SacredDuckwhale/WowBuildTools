@@ -20,6 +20,8 @@ local args = ...
 
 -- Load libs
 local inspect = require('Libs/inspect/inspect')
+
+-- Global functions (used across modules) - TODO: Move elsewhere?
 function dump(value)
 
 	print(inspect(value))
