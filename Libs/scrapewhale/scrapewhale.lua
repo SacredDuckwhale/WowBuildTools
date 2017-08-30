@@ -36,15 +36,15 @@ local args = { ... }
 -- Parser settings (defaults)
 settings.startDir = ".." -- start scraping here
 settings.useSquareBrackets = true -- TODO
-settings.localizationTable = "L" -- TODO
+settings.localizationTable = "L" 
 
 -- Export settings (defaults)
 settings.enableExport = true
 settings.exportFolder = "Locales"  -- relative to startDir
 settings.renameTo = "enGB" -- Careful: Will overwrite stuff without asking (TODO: config option to save a copy?)
 settings.exportFileType = "lua"
-settings.sortByName = false
-settings.groupByFile = false
+settings.sortByName = true
+settings.groupByFile = true
 settings.purgeDuplicateEntries = true
 settings.prefixString = [[local L = LibStub("AceLocale-3.0"):NewLocale("TotalAP", "enGB", true)]]
 settings.suffixString = ""
@@ -130,6 +130,7 @@ end
 -- @param filename The name of the file (will be appended after the directory from settings)
 -- @return The list of matches (table)
 function Scrapewhale:ParseFile(filename)
+
     local strings = {}
 	
     local file = assert(io.open(string.format("%s%s", filePrefix or "", filename), "r") or io.open(filename), "Could not open " .. filename)
@@ -137,10 +138,14 @@ function Scrapewhale:ParseFile(filename)
     file:close()
 
     for match in string.gmatch(text, "L%[\"(.-)\"%]") do
-        strings[match] = true
+	
+		strings[match] = true
 		phrases[match] = true
+		
     end
+	
     return strings
+	
 end
 
 -- Write <Namespace>_Overview file: Shows where each phrase originated, and how many phrases were found in each parsed file (may contain duplicate entries)
