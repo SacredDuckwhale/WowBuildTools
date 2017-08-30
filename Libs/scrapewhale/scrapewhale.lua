@@ -103,7 +103,7 @@ function Scrapewhale:ScanDir(path)
 			end
 
             local attr = lfs.attributes (f)
-            assert (type(attr) == "table")
+            assert (type(attr) == "table", "ScanDir -> LFS attribute for" .. path .. " is not table")
             if attr.mode == "directory" then -- Down the rabbit hole we go
                 Scrapewhale:ScanDir (f)
             end
