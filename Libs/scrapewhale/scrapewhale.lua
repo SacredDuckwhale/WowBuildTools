@@ -31,7 +31,7 @@ settings.enableExport = true
 settings.exportFolder = "Locales"  -- relative to startDir
 settings.renameTo = "enGB" -- Careful: Will overwrite stuff without asking (TODO: config option to save a copy?)
 settings.exportFileType = "lua"
-settings.sortByName = true -- TODO
+settings.sortByName = false
 settings.groupByFile = true -- TODO
 settings.purgeDuplicateEntries = false -- TODO
 settings.prefixString = [[local L = LibStub("AceLocale-3.0"):NewLocale("TotalAP", "enGB", true)]] -- TODO
@@ -147,7 +147,8 @@ function Scrapewhale:WriteOverviewFile(namespace)
 		for k in next, strings do
 			table.insert(sorted, k)
 		end
-		table.sort(sorted)
+
+		if settings.sortByName then table.sort(sorted) end
 		
 		if #sorted > 0 then -- Write entry for this file
 		
@@ -184,8 +185,7 @@ function Scrapewhale:WriteImportFile(namespace)
 	for k in next, p do -- Can't sort entries by value alone -> insert into temporary table
 		table.insert(phrases, k)
 	end
-	table.sort(phrases)
---	if settings.sortByName then table.sort(phrases) end
+	if settings.sortByName then table.sort(phrases) end
 	
 	-- Write ALL phrases to compare with CF export
 	if #phrases > 0 then
