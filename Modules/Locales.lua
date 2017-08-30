@@ -24,6 +24,7 @@ function script:Run(project, config, silent)
 	
 	local args = {} -- simulates CLI arguments submitted in the typical "-key value" pattern (or "-key" if the value is true)
 
+	-- Maps config settings to actual script CLI arguments (This isn't necessary for all scripts, and could be avoided if the config options were named appropriately... but then, the required arguments aren't always the most intuitive...)
 	args.enableExport = config.export.enabled
 	args.exportFolder = config.export.folder
 	args.renameTo = config.export.file
