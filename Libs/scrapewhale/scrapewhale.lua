@@ -153,7 +153,11 @@ function Scrapewhale:WriteOverviewFile(namespace)
 		table.sort(sorted)
 		
 		if #sorted > 0 then -- Write entry for this file
-			ns_file:write(string.format("-- %s (%d phrases)\n", string.gsub(file, "", ""), #sorted))
+		
+			local fileOverviewString = string.format("%s (%d phrase" .. (#sorted > 1 and "s" or "") .. ")", file, #sorted)
+			print("Writing entries for " .. fileOverviewString)
+			ns_file:write("-- " .. fileOverviewString .. "\n")
+			
 			for _, v in ipairs(sorted) do
 				--print("Writing file, set for index " .. v .. " = true")
 				ns_file:write(string.format(settings.localizationTable .. "[\"%s\"] = true\n", v)) -- TODO: squareBrackets setting
