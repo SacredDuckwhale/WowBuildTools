@@ -33,7 +33,7 @@ settings.renameTo = "enGB" -- Careful: Will overwrite stuff without asking (TODO
 settings.exportFileType = "lua"
 settings.sortByName = false
 settings.groupByFile = false
-settings.purgeDuplicateEntries = false -- TODO
+settings.purgeDuplicateEntries = true
 settings.prefixString = [[local L = LibStub("AceLocale-3.0"):NewLocale("TotalAP", "enGB", true)]]
 settings.suffixString = ""
 settings.ignoredFolders = "" -- Folders that should not be scraped, given as a comma-separated list (folder1;folder2;...;folderN)
@@ -188,10 +188,26 @@ function Scrapewhale:WriteImportFile(namespace)
 	if settings.sortByName then table.sort(phrases) end
 	
 	-- Write ALL phrases to compare with CF export
+	if settings.purgeDuplicateEntries then -- Use the consolidated matches table
+	
 	if #phrases > 0 then
 		for k, v in ipairs(phrases) do 
 			ns_cmp_file:write(string.format(settings.localizationTable .. "[\"%s\"] = true\n", v)) -- TODO: squareBrackets setting
 		end
+	end
+	
+	else -- Use the scrapeList and iterate over all files (may contain duplicate entries) - TODO: This seems kind of pointless, and it's also slower/takes up more space
+	
+		for _, file in pairs(scrapeList) do -- Access stored phrases for this file
+		
+			for k, v in ipairs(phrases) do -- Write phrase to import file
+			
+				ns_cmp_file:write(string.format(settings.localizationTable .. "[\"%s\"] = true\n", v))
+			
+			end
+		
+		end
+	
 	end
 	
 	ns_cmp_file:close()
