@@ -59,7 +59,8 @@ function M:CallScript(moduleName, project, silent)
 	
 	-- TODO: Check if config etc is valid?
 	
-	-- Get Args (maps config settings to actual command line arguments for the embedded script)
+	-- Extract relevant info from args (maps config settings to actual command line arguments for the embedded script)
+	if script.GetArgs == nil then return end -- TODO. Temporary skipping of unfinished modules
 	local args = script:GetArgs(project, config, silent)
 	
 	-- Build args table for parameters
