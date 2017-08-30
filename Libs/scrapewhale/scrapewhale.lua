@@ -112,7 +112,7 @@ function Scrapewhale:ScanDir(path)
 end
 
 -- Orig. WA2 // Parse file and add localized phrases that were found in them
-local function parseFile(filename)
+function Scrapewhale:ParseFile(filename)
     local strings = {}
 	
     local file = assert(io.open(string.format("%s%s", filePrefix or "", filename), "r") or io.open(filename), "Could not open " .. filename)
@@ -144,7 +144,7 @@ function Scrapewhale:Run() -- Actual script begins here
 			
 		--	print("\nParsing file: " .. file)
 			
-			local strings = parseFile(file)
+			local strings = Scrapewhale:ParseFile(file)
 
 			local sorted = {}
 			for k in next, strings do
