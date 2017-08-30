@@ -221,7 +221,7 @@ function Scrapewhale:Run() -- Actual script begins here
 	-- extract data from specified lua files
 	for _, namespace in ipairs(namespaces) do
 	
-		print("\nNamespace: " .. namespace)
+		print("\nScraping namespace: " .. namespace)
 		
 		-- Write overview (for the user, mainly)
 		Scrapewhale:WriteOverviewFile(namespace)
@@ -233,13 +233,10 @@ function Scrapewhale:Run() -- Actual script begins here
 		print("\nFinished scraping " .. #scrapeList .. " files for a total of " .. #phrases .. " phrases")
 		
 		-- Export to Locales/ folder (or elsewhere, I guess) if applicable
-		if settings.enableExport then 
-		
-			Scrapewhale:ExportPhrases(namespace)
-		
-		end	
+		if settings.enableExport then Scrapewhale:ExportPhrases(namespace) end	
 
 	end
+	
 end
 
 Scrapewhale:Run()
