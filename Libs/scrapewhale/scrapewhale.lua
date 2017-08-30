@@ -32,7 +32,7 @@ settings.exportFolder = "Locales"  -- relative to startDir
 settings.renameTo = "enGB" -- Careful: Will overwrite stuff without asking (TODO: config option to save a copy?)
 settings.exportFileType = "lua"
 settings.sortByName = false
-settings.groupByFile = true -- TODO
+settings.groupByFile = false
 settings.purgeDuplicateEntries = false -- TODO
 settings.prefixString = [[local L = LibStub("AceLocale-3.0"):NewLocale("TotalAP", "enGB", true)]] -- TODO
 settings.suffixString = "" -- TODO
@@ -154,7 +154,7 @@ function Scrapewhale:WriteOverviewFile(namespace)
 		
 			local fileOverviewString = string.format("%s (%d phrase" .. (#sorted > 1 and "s" or "") .. ")", file, #sorted)
 			print("Writing entries for " .. fileOverviewString)
-			ns_file:write("-- " .. fileOverviewString .. "\n")
+			if settings.groupByFile then ns_file:write("-- " .. fileOverviewString .. "\n") end
 			
 			for _, v in ipairs(sorted) do
 				
@@ -163,7 +163,7 @@ function Scrapewhale:WriteOverviewFile(namespace)
 				
 			end
 			
-			ns_file:write("\n")
+			if settings.groupByFile then ns_file:write("\n") end
 
 		end
 		
