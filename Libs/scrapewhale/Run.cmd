@@ -1,0 +1,2 @@
+lua scrapewhale.lua
+pause
