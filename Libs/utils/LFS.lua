@@ -20,6 +20,7 @@ local LFS = {}
 --- Returns whether or not a given file is in the list of ignored elements (that should not be parsed)
 -- Workaround because Lua patterns can't do | (regexp syntax) and I'm not installing a separate library just for this
 --- @param str The file path
+-- @param blacklist The table that entries will be checked in
 -- @return True if there's an entry for this file object; nil otherwise
 local function MatchesBlacklistEntry(str, blacklist)
 --		print(str)
@@ -36,7 +37,7 @@ end
 -- Recursive filesystem navigation via LFS to find all Lua files that could be scraped
 -- @param path The path to the directory (file object)
 -- @param scanList the Table that will be used to store the matches
--- @param blacklsitedFile A table that contains files which should not be added to the results
+-- @param blacklistedFile A table that contains files which should not be added to the results
 function LFS:ScanDir(path, scanList, blacklistedFiles)
 	
 	-- TOOD: Invalid parameters -> if blacklistedFiles and type(blacklistedFiles) == "table" then return end (etc)
