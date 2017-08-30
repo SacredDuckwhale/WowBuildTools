@@ -71,7 +71,8 @@ function Scrapewhale:Init()
 	end
 
 	-- Split ignored folders parameter to extract ignored folder names (as it can contain several folders in just one CLI argument)
-	for folderName in string.gmatch("([^%s]+);?", settings.ignoredFolders) do  -- Mark folders as "ignored" and build the "ignore list"
+	for folderName in string.gmatch(settings.ignoredFolders, "([^%s;]+);?") do  -- Mark folders as "ignored" and build the "ignore list"
+--		print("Init -> ignoring folder " .. folderName)
 		ignoreList[folderName] = true
 	end
 
