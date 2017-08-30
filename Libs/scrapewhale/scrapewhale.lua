@@ -1,9 +1,7 @@
--- ScrapeWhale.lua
--- Scraper for localized strings
--- Initially based on the WeakAuras 2 "babelfish" scraper, which was a great idea even though it didn't do things in the same way (Windows... :P)
---
--- TODO: Auto upload to CF via GET/API
--- TODO: What about the TOC namespace? (might as well leave that be for now)
+-- scrapewhale.lua
+-- This is a very basic scraper to find updated strings used in the addon localization process
+-- Acknowledgement: Initially based on the WeakAuras 2 "babelfish" scraper, which I thought was a great idea. It didn't do things in the same way and was intended for use with Unix systems (I'm on Windows... sue me)
+
 -- -----
 
 -- Libraries
@@ -30,7 +28,7 @@ settings.localizationTable = "L" -- TODO
 
 -- Export settings (defaults)
 settings.enableExport = true
-settings.exportFolder = "Locales/"  -- relative to startDir
+settings.exportFolder = "Locales"  -- relative to startDir
 settings.renameTo = "enGB" -- Careful: Will overwrite stuff without asking (TODO: config option to save a copy?)
 settings.exportFileType = "lua"
 settings.sortByName = true -- TODO
@@ -38,7 +36,6 @@ settings.groupByFile = true -- TODO
 settings.purgeDuplicateEntries = false -- TODO
 settings.prefixString = [[local L = LibStub("AceLocale-3.0"):NewLocale("TotalAP", "enGB", true)]] -- TODO
 settings.suffixString = "" -- TODO
-
 settings.ignoredFolders = "" -- Folders that should not be scraped, given as a comma-separated list (folder1;folder2;...;folderN)
 
 
@@ -64,7 +61,7 @@ function Scrapewhale:Init()
 		for k, v in pairs(parameters) do -- Check if this key exists in the default settings (which means it is valid)
 			--print(k, v)
 			if settings[k] and v ~= "" then -- Overwrite default with the command line argument
-				--print("Overwriting default settings for key = " .. tostring(k) .. " with CLI parameter v = " .. tostring(v) .. " (was: " .. type(settings[k]) .. " = \"" .. tostring(settings[k]) .. "\")")
+--				print("Overwriting default settings for key = " .. tostring(k) .. " with CLI parameter v = " .. tostring(v) .. " (was " .. (type(settings[k]) == "string" and "\"" or "") .. tostring(settings[k]) .. (type(settings[k]) == "string" and "\"" or "") .. ")")
 				settings[k] = v
 			end
 		end
@@ -197,7 +194,6 @@ function Scrapewhale:WriteImportFile(namespace)
 	
 end
 
-
 --- Write import file to desired output location (read from settings) for a given namespace
 --@param namespace The namespace to use (TODO: Other namespaces are NYI?)
 function Scrapewhale:ExportPhrases(namespace)
@@ -225,7 +221,7 @@ function Scrapewhale:Run() -- Actual script begins here
 	-- Fill scrapeList with entries of files to be parsed
 	Scrapewhale:ScanDir(settings.startDir) 
 
-	-- extract data from specified lua files
+	-- Extract data from specified lua files
 	for _, namespace in ipairs(namespaces) do
 	
 		print("Scraping namespace: " .. namespace .. "\n")
@@ -241,7 +237,7 @@ function Scrapewhale:Run() -- Actual script begins here
 		
 		-- Export to Locales/ folder (or elsewhere, I guess) if applicable
 		if settings.enableExport then Scrapewhale:ExportPhrases(namespace) end	
-
+	
 	end
 
 	print("-------------------------")

@@ -47,9 +47,7 @@ function CLI:ParseArguments(args)
 	
 		param, value = arg:match("^-([^%s]+)%s?(.*)$")
 		print(param, value)
-		
-		-- Split values if several are concatenated (list of ignored folders)	
-		
+
 		-- Split key and value pairs if any are found
 		print("Checking arg " .. index .. ": \"" .. tostring(arg) .. "\"")
 		if param and value ~= nil then -- Extraction was successful -> Save values
