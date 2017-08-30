@@ -18,12 +18,6 @@
 -- Read command line arguments
 local args = ...
 
--- Global functions (used across modules) - TODO: Move elsewhere?
-function dump(value)
-
-	print(inspect(value))
-
-end
 
 -- Load main module
 WBT = require("WBT")
@@ -34,6 +28,15 @@ local CLI = assert(loadfile("Libs/utils/CLI.lua") or loadfile("CLI.lua"), "Faile
 WBT.CLI = CLI()
 local LFS = assert(loadfile("Libs/utils/LFS.lua") or loadfile("LFS.lua"), "Failed to open required library/module")
 WBT.LFS = LFS()
+
+
+-- Global functions (used across modules) - TODO: Move elsewhere?
+function dump(value)
+
+	print(inspect(value))
+
+end
+
 
 -- Execute main module
 os.exit( WBT:Load(args) )
