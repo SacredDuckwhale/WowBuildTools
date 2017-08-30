@@ -34,8 +34,8 @@ settings.exportFileType = "lua"
 settings.sortByName = false
 settings.groupByFile = false
 settings.purgeDuplicateEntries = false -- TODO
-settings.prefixString = [[local L = LibStub("AceLocale-3.0"):NewLocale("TotalAP", "enGB", true)]] -- TODO
-settings.suffixString = "" -- TODO
+settings.prefixString = [[local L = LibStub("AceLocale-3.0"):NewLocale("TotalAP", "enGB", true)]]
+settings.suffixString = ""
 settings.ignoredFolders = "" -- Folders that should not be scraped, given as a comma-separated list (folder1;folder2;...;folderN)
 
 
@@ -209,7 +209,7 @@ function Scrapewhale:ExportPhrases(namespace)
 	local writeStr = ns_cmp_file:read("*all")
 
 	local exportFile = assert(io.open(exportFilePath, "w"), "Error opening export file: " .. exportFilePath)
-	exportFile:write(settings.prefixString, "\n\n", writeStr, "\n\n", settings.suffixString)
+	exportFile:write(tostring(settings.prefixString), "\n\n", writeStr, "\n\n", tostring(settings.suffixString))
 	exportFile:close()	
 	
 end

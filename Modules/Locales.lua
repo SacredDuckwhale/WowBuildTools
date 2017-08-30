@@ -32,8 +32,8 @@ function script:Run(project, config, silent)
 	args.sortByName = config.export.sort
 	args.groupByFile = config.export.group
 	args.purgeDuplicateEntries	 = config.export.purgeDuplicates
-	args.suffixString = config.export.prefixString
-	args.prefixString = config.export.suffixString
+	args.suffixString = config.export.suffixString
+	args.prefixString = config.export.prefixString
 
 	args.localizationTable = config.parser.localizationTable
 	args.useSquareBrackets = config.parser.useSquareBrackets
