@@ -156,12 +156,16 @@ function Scrapewhale:WriteOverviewFile(namespace)
 			ns_file:write("-- " .. fileOverviewString .. "\n")
 			
 			for _, v in ipairs(sorted) do
+				
 				--print("Writing file, set for index " .. v .. " = true")
 				ns_file:write(string.format(settings.localizationTable .. "[\"%s\"] = true\n", v)) -- TODO: squareBrackets setting
+				
 			end
+			
 			ns_file:write("\n")
+
 		end
-		--print("  (" .. #sorted .. ") " .. file)
+		
 	end
 	ns_file:close()
 
