@@ -6,8 +6,7 @@
 
 -- Libraries
 local lfs = require("lfs") -- LuaFileSystem
-local CLI = loadfile("Libs/scrapewhale/CLI.lua") or loadfile("CLI.lua") -- Command-line interface (arguments/parsing)
-CLI = CLI()
+local CLI = WBT.CLI
 local file_exists = function(name)
 
 	local f=io.open(name,"r")

@@ -18,9 +18,6 @@
 -- Read command line arguments
 local args = ...
 
--- Load libs
-local inspect = require('Libs/inspect/inspect')
-
 -- Global functions (used across modules) - TODO: Move elsewhere?
 function dump(value)
 
@@ -30,6 +27,11 @@ end
 
 -- Load main module
 WBT = require("WBT")
+
+-- Load libs
+local inspect = require('Libs/inspect/inspect')
+local CLI = loadfile("Libs/utils/CLI.lua") or loadfile("CLI.lua") -- Command-line interface (arguments/parsing)
+WBT.CLI = CLI()
 
 -- Execute main module
 os.exit( WBT:Load(args) )
