@@ -89,7 +89,7 @@ local function MatchesIgnorelistEntry(str)
 end
 
 -- Recursive filesystem navigation via LFS to find all Lua files that could be scraped
-local function ScanDir(path)
+function Scrapewhale:ScanDir(path)
 	
 	    for file in lfs.dir(path) do
         if file ~= "." and file ~= ".." then
@@ -105,7 +105,7 @@ local function ScanDir(path)
             local attr = lfs.attributes (f)
             assert (type(attr) == "table")
             if attr.mode == "directory" then -- Down the rabbit hole we go
-                ScanDir (f)
+                Scrapewhale:ScanDir (f)
             end
         end
     end
@@ -131,8 +131,9 @@ function Scrapewhale:Run() -- Actual script begins here
 	-- Read parameters from CLI and prepare internal storage tables
 	Scrapewhale:Init()
 
-	ScanDir(settings.startDir) -- Fill scrapeList with entries of files to be parsed
-	
+	-- Fill scrapeList with entries of files to be parsed
+	Scrapewhale:ScanDir(settings.startDir) 
+
 	-- extract data from specified lua files
 	for _, namespace in ipairs(namespaces) do
 		print("\nNamespace: " .. namespace)
