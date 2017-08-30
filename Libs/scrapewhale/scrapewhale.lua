@@ -8,6 +8,18 @@
 local lfs = require("lfs") -- LuaFileSystem
 local CLI = loadfile("Libs/scrapewhale/CLI.lua") or loadfile("CLI.lua") -- Command-line interface (arguments/parsing)
 CLI = CLI()
+local file_exists = function(name)
+
+	local f=io.open(name,"r")
+	
+	if f~=nil then
+	
+		io.close(f)
+		return true
+		
+	else return false end
+	
+end
 
 
 -- Script data structures
@@ -37,7 +49,7 @@ settings.purgeDuplicateEntries = true
 settings.prefixString = [[local L = LibStub("AceLocale-3.0"):NewLocale("TotalAP", "enGB", true)]]
 settings.suffixString = ""
 settings.ignoredFolders = "" -- Folders that should not be scraped, given as a comma-separated list (folder1;folder2;...;folderN)
-
+settings.overwriteMode = "silent"
 
 -- CurseForge namespaces (if several are to be used)
 local namespaces = {
@@ -224,6 +236,31 @@ function Scrapewhale:ExportPhrases(namespace)
 	local ns_cmp_file = assert(io.open(namespace .. "_Import.lua", "r"), "Error opening file")
 	local writeStr = ns_cmp_file:read("*all")
 
+	if file_exists(exportFilePath) then -- Rely on the overwriteMode setting to decide how to handle this
+	
+		if settings.overwriteMode == "notify" then -- Print and resume
+			print("Export file already exists -> Truncating it..")
+		end
+		
+		if settings.overwriteMode == "skip" then -- Don't export anything
+			print("Export file already exists -> Skipping export")
+		end
+		
+		if settings.overwriteMode == "ask" then -- Ask user to confirm the export
+			print("Export file already exists -> Overwrite (y/n)?")
+			local input = io.read()
+			if not (input == "y"  or input == "Y" or input == "yes" or input == "ok") then
+				
+				print("Got it! No writing over things...")
+				return
+			else
+				print("Very good! Truncating it...")
+			end
+		
+		end
+		
+	end
+	
 	local exportFile = assert(io.open(exportFilePath, "w"), "Error opening export file: " .. exportFilePath)
 	exportFile:write(tostring(settings.prefixString), "\n\n", writeStr, "\n\n", tostring(settings.suffixString))
 	exportFile:close()	
