@@ -192,6 +192,23 @@ function Scrapewhale:WriteImportFile(namespace)
 	
 end
 
+
+--- Write import file to desired output location (read from settings) for a given namespace
+--@param namespace The namespace to use (TODO: Other namespaces are NYI?)
+function Scrapewhale:ExportPhrases(namespace)
+
+	local exportFilePath = settings.startDir .. "\\" .. settings.exportFolder .. "\\" .. settings.renameTo .. "." .. settings.exportFileType
+	print("\nExporting scraped phrases to " .. exportFilePath)
+	
+	local ns_cmp_file = assert(io.open(namespace .. "_Import.lua", "r"), "Error opening file")
+	local writeStr = ns_cmp_file:read("*all")
+
+	local exportFile = assert(io.open(exportFilePath, "w"), "Error opening export file: " .. exportFilePath)
+	exportFile:write(settings.prefixString, "\n\n", writeStr, "\n\n", settings.suffixString)
+	exportFile:close()	
+	
+end
+
 --- Starts the parsing process with the given settings
 function Scrapewhale:Run() -- Actual script begins here
 
@@ -203,6 +220,7 @@ function Scrapewhale:Run() -- Actual script begins here
 
 	-- extract data from specified lua files
 	for _, namespace in ipairs(namespaces) do
+	
 		print("\nNamespace: " .. namespace)
 		
 		-- Write overview (for the user, mainly)
@@ -214,20 +232,13 @@ function Scrapewhale:Run() -- Actual script begins here
 		-- All done, yay ^_^ (Print summary) - Well, almost...
 		print("\nFinished scraping " .. #scrapeList .. " files for a total of " .. #phrases .. " phrases")
 		
-		-- Export to Locales/ folder (or elsewhere, I guess)
+		-- Export to Locales/ folder (or elsewhere, I guess) if applicable
 		if settings.enableExport then 
-			local exportFilePath = settings.startDir .. "\\" .. settings.exportFolder .. "\\" .. settings.renameTo .. "." .. settings.exportFileType
-			print("\nExporting scraped phrases to " .. exportFilePath)
-			local ns_cmp_file = assert(io.open(namespace .. "_Import.lua", "r"), "Error opening file")
-			local writeStr = ns_cmp_file:read("*all")
 		
-			local exportFile = assert(io.open(exportFilePath, "w"), "Error opening export file: " .. exportFilePath)
-			exportFile:write(settings.prefixString, "\n\n", writeStr, "\n\n", settings.suffixString)
-			exportFile:close()	
+			Scrapewhale:ExportPhrases(namespace)
+		
 		end	
 
-		--------
-		
 	end
 end
 
