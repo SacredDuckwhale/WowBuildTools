@@ -54,6 +54,10 @@ function CLI:ParseArguments(args)
 		
 			parameters[param] = value ~= "" and value or true -- Set boolean keys to true, as only enabling parameters are valid (-enableStuff sets parameters.enableStuff = true - if it was false, there'd be no point)
 
+		elseif param then -- The only valid argument type would be a boolean toggle (enable) -> Set to true	
+			
+			parameters[param] = true
+			
 		else -- use default value
 		
 			print("Ignoring arg " .. index .. " because it was invalid")
