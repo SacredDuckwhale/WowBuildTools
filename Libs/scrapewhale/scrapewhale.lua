@@ -165,6 +165,33 @@ function Scrapewhale:WriteOverviewFile(namespace)
 
 end
 
+-- Write <Namespace>_Import file: Gives a condensed summary (to be imported by CF) by filtering duplicate entries and sorting results by name
+-- Note that the Overview can just as easily be imported, as duplicate entries overwrite each other and comments are irrelevant; it is larger, though, and would be a waste of space if included in an addon
+--@param namespace The namespace to use (TODO: Other namespaces are NYI?)
+function Scrapewhale:WriteImportFile(namespace)
+
+	local ns_cmp_file = assert(io.open(namespace .. "_Import.lua", "w"), "Error opening file")
+	
+	p = phrases
+	phrases = {}
+	
+	for k in next, p do -- Can't sort entries by value alone -> insert into temporary table
+		table.insert(phrases, k)
+	end
+	table.sort(phrases)
+--	if settings.sortByName then table.sort(phrases) end
+	
+	-- Write ALL phrases to compare with CF export
+	if #phrases > 0 then
+		for k, v in ipairs(phrases) do 
+			ns_cmp_file:write(string.format(settings.localizationTable .. "[\"%s\"] = true\n", v)) -- TODO: squareBrackets setting
+		end
+	end
+	
+	ns_cmp_file:close()
+	
+end
+
 --- Starts the parsing process with the given settings
 function Scrapewhale:Run() -- Actual script begins here
 
@@ -180,25 +207,9 @@ function Scrapewhale:Run() -- Actual script begins here
 		
 		-- Write overview (for the user, mainly)
 		Scrapewhale:WriteOverviewFile(namespace)
-		
-		-- Write summary (to be imported by CF)
-		local ns_cmp_file = assert(io.open(namespace .. "_Import.lua", "w"), "Error opening file")
-		
-		p = phrases
-		phrases = {}
-		
-		for k in next, p do -- Can't sort entries by value alone -> insert into temporary table
-			table.insert(phrases, k)
-		end
-		table.sort(phrases)
-	--	if settings.sortByName then table.sort(phrases) end
-		
-		-- Write ALL phrases to compare with CF export
-		if #phrases > 0 then
-			for k, v in ipairs(phrases) do 
-				ns_cmp_file:write(string.format(settings.localizationTable .. "[\"%s\"] = true\n", v)) -- TODO: squareBrackets setting
-			end
-		end
+	
+		-- Write import file (to include in the addon or use for CurseForge uploads)
+		Scrapewhale:WriteImportFile(namespace)
 		
 		-- All done, yay ^_^ (Print summary) - Well, almost...
 		print("\nFinished scraping " .. #scrapeList .. " files for a total of " .. #phrases .. " phrases")
@@ -207,7 +218,6 @@ function Scrapewhale:Run() -- Actual script begins here
 		if settings.enableExport then 
 			local exportFilePath = settings.startDir .. "\\" .. settings.exportFolder .. "\\" .. settings.renameTo .. "." .. settings.exportFileType
 			print("\nExporting scraped phrases to " .. exportFilePath)
-			ns_cmp_file:close()
 			local ns_cmp_file = assert(io.open(namespace .. "_Import.lua", "r"), "Error opening file")
 			local writeStr = ns_cmp_file:read("*all")
 		
