@@ -77,7 +77,10 @@ function Scrapewhale:Init()
 
 end
 
+--- Returns whether or not a given file is in the list of ignored elements (that should not be parsed)
 -- Workaround because Lua patterns can't do | (regexp syntax) and I'm not installing a separate library just for this
+--- @param str The file path
+-- @return True if there's an entry for this file object; nil otherwise
 local function MatchesIgnorelistEntry(str)
 --		print(str)
 	for k, v in pairs(ignoreList) do
@@ -88,7 +91,9 @@ local function MatchesIgnorelistEntry(str)
 	return false
 end
 
+--- Scan a directory and add lua files to the scrape list (queue)
 -- Recursive filesystem navigation via LFS to find all Lua files that could be scraped
+-- @param path The path to the directory (file object)
 function Scrapewhale:ScanDir(path)
 	
 	    for file in lfs.dir(path) do
@@ -111,7 +116,9 @@ function Scrapewhale:ScanDir(path)
     end
 end
 
--- Orig. WA2 // Parse file and add localized phrases that were found in them
+--- Parses a file and adds localized phrases that were found in them to the export list
+-- @param filename The name of the file (will be appended after the directory from settings)
+-- @return The list of matches (table)
 function Scrapewhale:ParseFile(filename)
     local strings = {}
 	
