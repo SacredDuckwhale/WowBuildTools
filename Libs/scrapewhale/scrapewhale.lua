@@ -133,6 +133,39 @@ function Scrapewhale:ParseFile(filename)
     return strings
 end
 
+-- Write <Namespace>_Overview file: Shows where each phrase originated, and how many phrases were found in each parsed file (may contain duplicate entries)
+-- While the resulting file could be imported, it serves mainly as a summary intended for the human eye
+-- @param namespace The namespace to use (TODO: Other namespaces are NYI?)
+function Scrapewhale:WriteOverviewFile(namespace)
+
+	local ns_file = assert(io.open(namespace .. "_Overview.lua", "w"), "Error opening file")
+	for _, file in ipairs(scrapeList) do  -- Check for .lua files in this directory
+		
+	--	print("\nParsing file: " .. file)
+		
+		local strings = Scrapewhale:ParseFile(file)
+
+		local sorted = {}
+		for k in next, strings do
+			table.insert(sorted, k)
+		end
+		table.sort(sorted)
+		
+		if #sorted > 0 then -- Write entry for this file
+			ns_file:write(string.format("-- %s (%d phrases)\n", string.gsub(file, "", ""), #sorted))
+			for _, v in ipairs(sorted) do
+				--print("Writing file, set for index " .. v .. " = true")
+				ns_file:write(string.format(settings.localizationTable .. "[\"%s\"] = true\n", v)) -- TODO: squareBrackets setting
+			end
+			ns_file:write("\n")
+		end
+		--print("  (" .. #sorted .. ") " .. file)
+	end
+	ns_file:close()
+
+end
+
+--- Starts the parsing process with the given settings
 function Scrapewhale:Run() -- Actual script begins here
 
 	-- Read parameters from CLI and prepare internal storage tables
@@ -144,32 +177,9 @@ function Scrapewhale:Run() -- Actual script begins here
 	-- extract data from specified lua files
 	for _, namespace in ipairs(namespaces) do
 		print("\nNamespace: " .. namespace)
-		local ns_file = assert(io.open(namespace .. "_Overview.lua", "w"), "Error opening file")
 		
-
-		for _, file in ipairs(scrapeList) do  -- Check for .lua files in this directory
-			
-		--	print("\nParsing file: " .. file)
-			
-			local strings = Scrapewhale:ParseFile(file)
-
-			local sorted = {}
-			for k in next, strings do
-				table.insert(sorted, k)
-			end
-			table.sort(sorted)
-			
-			if #sorted > 0 then -- Write entry for this file
-				ns_file:write(string.format("-- %s (%d phrases)\n", string.gsub(file, "", ""), #sorted))
-				for _, v in ipairs(sorted) do
-					--print("Writing file, set for index " .. v .. " = true")
-					ns_file:write(string.format(settings.localizationTable .. "[\"%s\"] = true\n", v)) -- TODO: squareBrackets setting
-				end
-				ns_file:write("\n")
-			end
-			--print("  (" .. #sorted .. ") " .. file)
-		end
-		ns_file:close()
+		-- Write overview (for the user, mainly)
+		Scrapewhale:WriteOverviewFile(namespace)
 		
 		-- Write summary (to be imported by CF)
 		local ns_cmp_file = assert(io.open(namespace .. "_Import.lua", "w"), "Error opening file")
@@ -204,7 +214,10 @@ function Scrapewhale:Run() -- Actual script begins here
 			local exportFile = assert(io.open(exportFilePath, "w"), "Error opening export file: " .. exportFilePath)
 			exportFile:write(settings.prefixString, "\n\n", writeStr, "\n\n", settings.suffixString)
 			exportFile:close()	
-		end		
+		end	
+
+		--------
+		
 	end
 end
 
