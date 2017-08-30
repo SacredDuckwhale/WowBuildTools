@@ -60,7 +60,7 @@ function Scrapewhale:Init()
 	if parameters then -- Validate arguments and discard unusable ones
 		for k, v in pairs(parameters) do -- Check if this key exists in the default settings (which means it is valid)
 			--print(k, v)
-			if settings[k] and v ~= "" then -- Overwrite default with the command line argument
+			if settings[k] ~= nil and v ~= "" then -- Overwrite default with the command line argument
 --				print("Overwriting default settings for key = " .. tostring(k) .. " with CLI parameter v = " .. tostring(v) .. " (was " .. (type(settings[k]) == "string" and "\"" or "") .. tostring(settings[k]) .. (type(settings[k]) == "string" and "\"" or "") .. ")")
 				settings[k] = v
 			end
