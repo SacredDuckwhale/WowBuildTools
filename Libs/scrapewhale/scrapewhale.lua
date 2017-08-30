@@ -30,7 +30,7 @@ settings.localizationTable = "L" -- TODO
 
 -- Export settings (defaults)
 settings.enableExport = true
-settings.exportFolder = "Locales\\"  -- relative to startDir
+settings.exportFolder = "Locales/"  -- relative to startDir
 settings.renameTo = "enGB" -- Careful: Will overwrite stuff without asking (TODO: config option to save a copy?)
 settings.exportFileType = "lua"
 settings.sortByName = true -- TODO
@@ -202,7 +202,7 @@ end
 --@param namespace The namespace to use (TODO: Other namespaces are NYI?)
 function Scrapewhale:ExportPhrases(namespace)
 
-	local exportFilePath = settings.startDir .. "\\" .. settings.exportFolder .. "\\" .. settings.renameTo .. "." .. settings.exportFileType
+	local exportFilePath = settings.startDir .. "/" .. settings.exportFolder .. "/" .. settings.renameTo .. "." .. settings.exportFileType
 	print("\nExporting scraped phrases to " .. exportFilePath)
 	
 	local ns_cmp_file = assert(io.open(namespace .. "_Import.lua", "r"), "Error opening file")
@@ -217,6 +217,8 @@ end
 --- Starts the parsing process with the given settings
 function Scrapewhale:Run() -- Actual script begins here
 
+	print("-------------------------")
+
 	-- Read parameters from CLI and prepare internal storage tables
 	Scrapewhale:Init()
 
@@ -226,7 +228,7 @@ function Scrapewhale:Run() -- Actual script begins here
 	-- extract data from specified lua files
 	for _, namespace in ipairs(namespaces) do
 	
-		print("\nScraping namespace: " .. namespace)
+		print("Scraping namespace: " .. namespace .. "\n")
 		
 		-- Write overview (for the user, mainly)
 		Scrapewhale:WriteOverviewFile(namespace)
@@ -241,6 +243,8 @@ function Scrapewhale:Run() -- Actual script begins here
 		if settings.enableExport then Scrapewhale:ExportPhrases(namespace) end	
 
 	end
+
+	print("-------------------------")
 	
 end
 

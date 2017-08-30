@@ -32,7 +32,7 @@ setfenv(1, GlobalConfig) -- This is to avoid littering the global namespace with
 -- exclusions = folders that are not going to be checked for .lua files
 Projects = {
 	["TotalAP"] = {
-		["root"] = "F:\\\\GitHub\\TotalAP",
+		["root"] = "F://GitHub/TotalAP",
 		["exclusions"] = { -- TODO: Are they even used somewhere?
 			-- Folders
 			"_DEV",
