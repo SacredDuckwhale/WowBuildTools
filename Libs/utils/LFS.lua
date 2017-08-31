@@ -47,10 +47,10 @@ function LFS:ScanDir(path, scanList, blacklistedFiles)
             local f = path..'/'..file
 	
 			if string.match(file, ".lua$") and not MatchesBlacklistEntry(f, blacklistedFiles) then -- Is a valid file for scraping
-				print ("\tAdding file to the scrape list: "..f)
+--				print ("\tAdding file to the list: "..f)
 				table.insert(scanList, f)
 			else
-				--print("Ignored file (not a .lua file): " .. file)
+--				print("Ignored file (not a .lua file): " .. file)
 			end
 
             local attr = lfs.attributes (f)

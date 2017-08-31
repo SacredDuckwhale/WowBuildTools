@@ -12,9 +12,8 @@ script.extension = "lua"
 
 function script:GetArgs(project, config, silent)
 
-	local args = {} -- simulates CLI arguments submitted in the typical "-key value" pattern (or "-key" if the value is true)
+	local args = {}
 
-	-- Maps config settings to actual script CLI arguments (This isn't necessary for all scripts, and could be avoided if the config options were named appropriately... but then, the required arguments aren't always the most intuitive...)
 	args.enableExport = config.export.enabled
 	args.exportFolder = config.export.folder
 	args.renameTo = config.export.file
@@ -35,8 +34,6 @@ function script:GetArgs(project, config, silent)
 	return args
 
 end
-
-
 
 ----------------------------------------------------------------------------------------------------------------------
 

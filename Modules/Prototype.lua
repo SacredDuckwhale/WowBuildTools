@@ -53,16 +53,14 @@ function M:CallScript(moduleName, project, silent)
 	
 	-- Read script that will be used to build the addon according to the given config settings
 	local scriptFile = "Libs\\" .. script.folder .. "\\" .. script.file .. "." .. script.extension
-	local Script = assert(loadfile(scriptFile), "Failed to load script file: " .. scriptFile)
-	
-	-- Extract relevant info from args
+	local Script, msg = assert(loadfile(scriptFile) or print(select(2, loadfile(scriptFile))), "Failed to load script file: " .. scriptFile)
 	
 	-- TODO: Check if config etc is valid?
 	
 	-- Extract relevant info from args (maps config settings to actual command line arguments for the embedded script)
 	if script.GetArgs == nil then return end -- TODO. Temporary skipping of unfinished modules
 	local args = script:GetArgs(project, config, silent)
-	
+
 	-- Build args table for parameters
 	local params = {}
 	for k, v in pairs(args) do -- Form string to pass along
@@ -85,7 +83,7 @@ function M:CallScript(moduleName, project, silent)
 		
 	end
 
-	-- Run script with this configuration
+	-- Run script with this configuration (call with command-line parameters in -key value format)
 	_ = not silent and print("Attempting to run script file: " .. scriptFile)
 	Script(unpack(params))
 	--Script(project, config, silent)
