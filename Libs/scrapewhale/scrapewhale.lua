@@ -5,9 +5,8 @@
 -- -----
 
 -- Libraries
-local lfs = require("lfs") -- LuaFileSystem
-local CLI = loadfile("Libs/scrapewhale/CLI.lua") or loadfile("CLI.lua") -- Command-line interface (arguments/parsing)
-CLI = CLI()
+local CLI = WBT.CLI
+local LFS = WBT.LFS
 local file_exists = function(name)
 
 	local f=io.open(name,"r")
@@ -87,45 +86,6 @@ function Scrapewhale:Init()
 
 end
 
---- Returns whether or not a given file is in the list of ignored elements (that should not be parsed)
--- Workaround because Lua patterns can't do | (regexp syntax) and I'm not installing a separate library just for this
---- @param str The file path
--- @return True if there's an entry for this file object; nil otherwise
-local function MatchesIgnorelistEntry(str)
---		print(str)
-	for k, v in pairs(ignoreList) do
---		print("Test for match of str " .. str .. " with k =  " .. k)
-		if string.find(str, k) then return true end
-	end
-	
-	return false
-end
-
---- Scan a directory and add lua files to the scrape list (queue)
--- Recursive filesystem navigation via LFS to find all Lua files that could be scraped
--- @param path The path to the directory (file object)
-function Scrapewhale:ScanDir(path)
-	
-	    for file in lfs.dir(path) do
-        if file ~= "." and file ~= ".." then
-            local f = path..'/'..file
-	
-			if string.match(file, ".lua$") and not MatchesIgnorelistEntry(f) then -- Is a valid file for scraping
-			--	print ("\tAdding file to the scrape list: "..f)
-				table.insert(scrapeList, f)
-			else
-				--print("Ignored file (not a .lua file): " .. file)
-			end
-
-            local attr = lfs.attributes (f)
-            assert (type(attr) == "table", "ScanDir -> LFS attribute for" .. path .. " is not table")
-            if attr.mode == "directory" then -- Down the rabbit hole we go
-                Scrapewhale:ScanDir (f)
-            end
-        end
-    end
-end
-
 --- Parses a file and adds localized phrases that were found in them to the export list
 -- @param filename The name of the file (will be appended after the directory from settings)
 -- @return The list of matches (table)
@@ -153,7 +113,7 @@ end
 -- @param namespace The namespace to use (TODO: Other namespaces are NYI?)
 function Scrapewhale:WriteOverviewFile(namespace)
 
-	local ns_file = assert(io.open(namespace .. "_Overview.lua", "w"), "Error opening file")
+	local ns_file = assert(io.open("tmp/" .. namespace .. "_Overview.lua", "w"), "Error opening file")
 	for _, file in ipairs(scrapeList) do  -- Check for .lua files in this directory
 		
 	--	print("\nParsing file: " .. file)
@@ -194,7 +154,7 @@ end
 --@param namespace The namespace to use (TODO: Other namespaces are NYI?)
 function Scrapewhale:WriteImportFile(namespace)
 
-	local ns_cmp_file = assert(io.open(namespace .. "_Import.lua", "w"), "Error opening file")
+	local ns_cmp_file = assert(io.open("tmp/" .. namespace .. "_Import.lua", "w"), "Error opening file")
 	
 	p = phrases
 	phrases = {}
@@ -238,7 +198,7 @@ function Scrapewhale:ExportPhrases(namespace)
 	local exportFilePath = settings.startDir .. "/" .. settings.exportFolder .. "/" .. settings.renameTo .. "." .. settings.exportFileType
 	print("\nExporting scraped phrases to " .. exportFilePath)
 	
-	local ns_cmp_file = assert(io.open(namespace .. "_Import.lua", "r"), "Error opening file")
+	local ns_cmp_file = assert(io.open("tmp/" .. namespace .. "_Import.lua", "r"), "Error opening file")
 	local writeStr = ns_cmp_file:read("*all")
 
 	if file_exists(exportFilePath) then -- Rely on the overwriteMode setting to decide how to handle this
@@ -281,7 +241,7 @@ function Scrapewhale:Run() -- Actual script begins here
 	Scrapewhale:Init()
 
 	-- Fill scrapeList with entries of files to be parsed
-	Scrapewhale:ScanDir(settings.startDir) 
+	LFS:ScanDir(settings.startDir, scrapeList, ignoreList) 
 
 	-- Extract data from specified lua files
 	for _, namespace in ipairs(namespaces) do

@@ -22,12 +22,12 @@ local function GetScriptName(moduleName)
 
 end
 
---- Run a module's script with the appropriate configuration parameters
+--- Call a module's script with the appropriate configuration parameters
 -- @param moduleName The module's name (NOT the script name, which is found in the module definition file)
 -- @param project The project table, which includes critical information required to run the script on it
 -- @param silent Toggles silent mode, i.e., all output is being muted
 -- @return Boolean indicating whether the script ran without issues (true) or if it was skipped (false)
-function M:Run(moduleName, project, silent)
+function M:CallScript(moduleName, project, silent)
 	
 	local _ -- Used for silent mode only
 	local root = project.root
@@ -48,7 +48,45 @@ function M:Run(moduleName, project, silent)
 	
 	-- Pass everything to the module's script loader (which will call the script according to its settings)
 	_ = not silent and print("Executing script loader for module: " .. moduleName)
-	script:Run(project, config, silent)
+	
+	local _
+	
+	-- Read script that will be used to build the addon according to the given config settings
+	local scriptFile = "Libs\\" .. script.folder .. "\\" .. script.file .. "." .. script.extension
+	local Script, msg = assert(loadfile(scriptFile) or print(select(2, loadfile(scriptFile))), "Failed to load script file: " .. scriptFile)
+	
+	-- TODO: Check if config etc is valid?
+	
+	-- Extract relevant info from args (maps config settings to actual command line arguments for the embedded script)
+	if script.GetArgs == nil then return end -- TODO. Temporary skipping of unfinished modules
+	local args = script:GetArgs(project, config, silent)
+
+	-- Build args table for parameters
+	local params = {}
+	for k, v in pairs(args) do -- Form string to pass along
+		
+		if not (type(v) == "boolean" and not v) -- Skip boolean values that are false (as no setting needs to be disabled manually)
+		and not (type(v) == "string" and v == "") -- empty strings need not be passed either
+		then -- Is a valid argument and should be passed
+		
+			if type(v) == "table" then -- Concatenate table entries (will be ignoredFolders) -> -key value1;value2;...;valueN
+				
+				params[#params+1] = "-" .. k .. " " .. table.concat(v, ";")
+				
+			else -- Concatenate as -key value
+		
+				params[#params+1] = "-" .. k ..  (type(v) ~= "boolean" and (" " .. v) or "") -- remove boolean values even if they are true to get the -key syntax
+			
+			end
+		
+		end
+		
+	end
+
+	-- Run script with this configuration (call with command-line parameters in -key value format)
+	_ = not silent and print("Attempting to run script file: " .. scriptFile)
+	Script(unpack(params))
+	--Script(project, config, silent)
 	
 	_ = not silent and print("Module " .. moduleName .. " finished running  (success = " .. tostring(success) .. ")")
 	return success

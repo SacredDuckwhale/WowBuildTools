@@ -92,7 +92,7 @@ function WBT:Load(args)
 		for key, enabledModule in pairs(EnabledModules) do -- 
 
 			local Module = assert(dofile("Modules/Prototype.lua", "Failed to load prototype module"))
-			enabledModule.ranSuccessfully = Module:Run(enabledModule.name, settings, false) -- Pass all necessary data to the generalized Module class, which will then start each script with its respective configuration and required arguments
+			enabledModule.ranSuccessfully = Module:CallScript(enabledModule.name, settings, false) -- Pass all necessary data to the generalized Module class, which will then start each script with its respective configuration and required arguments
 			
 		end
 		
