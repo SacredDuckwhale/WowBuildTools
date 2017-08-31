@@ -113,7 +113,7 @@ end
 -- @param namespace The namespace to use (TODO: Other namespaces are NYI?)
 function Scrapewhale:WriteOverviewFile(namespace)
 
-	local ns_file = assert(io.open(namespace .. "_Overview.lua", "w"), "Error opening file")
+	local ns_file = assert(io.open("tmp/" .. namespace .. "_Overview.lua", "w"), "Error opening file")
 	for _, file in ipairs(scrapeList) do  -- Check for .lua files in this directory
 		
 	--	print("\nParsing file: " .. file)
@@ -154,7 +154,7 @@ end
 --@param namespace The namespace to use (TODO: Other namespaces are NYI?)
 function Scrapewhale:WriteImportFile(namespace)
 
-	local ns_cmp_file = assert(io.open(namespace .. "_Import.lua", "w"), "Error opening file")
+	local ns_cmp_file = assert(io.open("tmp/" .. namespace .. "_Import.lua", "w"), "Error opening file")
 	
 	p = phrases
 	phrases = {}
@@ -198,7 +198,7 @@ function Scrapewhale:ExportPhrases(namespace)
 	local exportFilePath = settings.startDir .. "/" .. settings.exportFolder .. "/" .. settings.renameTo .. "." .. settings.exportFileType
 	print("\nExporting scraped phrases to " .. exportFilePath)
 	
-	local ns_cmp_file = assert(io.open(namespace .. "_Import.lua", "r"), "Error opening file")
+	local ns_cmp_file = assert(io.open("tmp/" .. namespace .. "_Import.lua", "r"), "Error opening file")
 	local writeStr = ns_cmp_file:read("*all")
 
 	if file_exists(exportFilePath) then -- Rely on the overwriteMode setting to decide how to handle this
