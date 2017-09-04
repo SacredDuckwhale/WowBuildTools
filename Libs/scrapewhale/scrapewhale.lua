@@ -201,7 +201,8 @@ function Scrapewhale:ExportPhrases(namespace)
 	
 	local ns_cmp_file = assert(io.open("tmp/" .. namespace .. "_Import.lua", "r"), "Error opening file")
 	local writeStr = ns_cmp_file:read("*all")
-
+	ns_cmp_file:close()
+	
 	if file_exists(exportFilePath) then -- Rely on the overwriteMode setting to decide how to handle this
 	
 		if settings.overwriteMode == "notify" then -- Print and resume
