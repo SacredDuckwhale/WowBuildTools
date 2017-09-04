@@ -33,6 +33,7 @@ local args = { ... }
 
 
 -- Parser settings (defaults)
+settings.projectName = "" -- TODO
 settings.startDir = ".." -- start scraping here
 settings.useSquareBrackets = true -- TODO
 settings.localizationTable = "L" 
@@ -239,6 +240,9 @@ function Scrapewhale:Run() -- Actual script begins here
 
 	-- Read parameters from CLI and prepare internal storage tables
 	Scrapewhale:Init()
+print("Checking namespaces for project name: " .. settings.projectName)
+
+-- TODO: Namespaces
 
 	-- Fill scrapeList with entries of files to be parsed
 	LFS:ScanDir(settings.startDir, scrapeList, ignoreList) 

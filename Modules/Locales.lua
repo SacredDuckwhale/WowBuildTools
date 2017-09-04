@@ -29,6 +29,7 @@ function script:GetArgs(project, config, silent)
 	args.useSquareBrackets = config.parser.useSquareBrackets
 	args.ignoredFolders = config.parser.ignoreFolders
 	
+	args.projectName = string.match(project.root, ".*/(.+)$") -- TODO
 	args.startDir = project.root
 	
 	return args
