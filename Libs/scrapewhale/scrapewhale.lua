@@ -227,7 +227,7 @@ function Scrapewhale:ExportPhrases(namespace)
 	end
 	
 	local exportFile = assert(io.open(exportFilePath, "w"), "Error opening export file: " .. exportFilePath)
-	exportFile:write(tostring(settings.prefixString), "\n\n", writeStr, "\n\n", tostring(settings.suffixString))
+	exportFile:write(tostring(settings.prefixString), settings.prefixString ~= "" and "\n\n" or "", writeStr, settings.suffixString ~= "" and "\n\n" or "", tostring(settings.suffixString))
 	exportFile:close()	
 	
 end
