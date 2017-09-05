@@ -16,7 +16,7 @@ function script:GetArgs(project, config, silent)
 
 	args.enableExport = config.export.enabled
 	args.exportFolder = config.export.folder
-	args.renameTo = config.export.file
+	args.renameTo = config.export.file ~= "" and config.export.file or project.defaultLocale or "enUS" -- TODO: Obsolete? OR: Option to use Locale vs. custom name
 	args.exportFileType = config.export.extension
 	args.overwriteMode = config.export.overwriteMode
 	args.sortByName = config.export.sort
@@ -30,6 +30,7 @@ function script:GetArgs(project, config, silent)
 	args.ignoredFolders = config.parser.ignoreFolders
 	
 	args.projectName = string.match(project.root, ".*/(.+)$") -- TODO
+	args.defaultLocale = project.defaultLocale or "enUS"
 	args.startDir = project.root
 	
 	return args

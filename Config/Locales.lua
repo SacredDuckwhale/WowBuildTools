@@ -26,7 +26,7 @@ parser.ignoreFolders = { -- Folders that should not be scraped
 -- Export settings
 export.enabled = true -- Save scraped results in file (as opposed to simply outputting them)
 export.folder = "Locales" -- This is the folder inside the project directory where the output file will be deposited
-export.file = "enGB" -- The Lua file that will hold the default locale (which is being exported)
+export.file = "" -- The Lua file that will hold the default locale (which is being exported); leave empty ("") if it is supposed to be the default locale
 export.extension = "lua"
 export.overwriteMode = "silent" -- How to act if the export file already exists NYI (ask -> read, then (write or skip) and notify, notify -> write and print, silent -> write, skip -> skip and print - options) (only applies if exports are enabled)
 export.sort = true -- Whether or not the phrases should be sorted lexicographically, or listed in the order of appearance. Applies to both namespace overview files, as well as the exported file (if exports are enabled)

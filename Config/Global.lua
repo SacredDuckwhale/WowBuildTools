@@ -41,8 +41,10 @@ Projects = {
 			"Tests",
 			"Locales",
 			".git",
-		}
-	}
+		},
+		["defaultLocale"] = "enGB",
+	},
+	
 }
 
 --- These are the modules that should be executed. Note that this will be overwritten by command line arguments where necessary

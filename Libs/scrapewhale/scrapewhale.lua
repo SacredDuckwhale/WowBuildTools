@@ -34,6 +34,7 @@ local args = { ... }
 
 -- Parser settings (defaults)
 settings.projectName = "" -- TODO
+settings.defaultLocale = "" -- TODO
 settings.startDir = ".." -- start scraping here
 settings.useSquareBrackets = true -- TODO
 settings.localizationTable = "L" 
@@ -46,7 +47,7 @@ settings.exportFileType = "lua"
 settings.sortByName = true
 settings.groupByFile = true
 settings.purgeDuplicateEntries = true
-settings.prefixString = [[local L = LibStub("AceLocale-3.0"):NewLocale("TotalAP", "enGB", true)]]
+settings.prefixString = "" 
 settings.suffixString = ""
 settings.ignoredFolders = "" -- Folders that should not be scraped, given as a comma-separated list (folder1;folder2;...;folderN)
 settings.overwriteMode = "silent"
@@ -84,6 +85,8 @@ function Scrapewhale:Init()
 --		print("Init -> ignoring folder " .. folderName)
 		ignoreList[folderName] = true
 	end
+	
+	settings.prefixString = [[local L = LibStub("AceLocale-3.0"):NewLocale("]] .. settings.projectName .. [[", "]] .. settings.renameTo .. [[", true)]] -- TODO. Hardcoded project name...
 
 end
 
