@@ -28,9 +28,12 @@ function TestHub:Run() -- Actual script begins here
 		-- Append lua path so that the project folder is browsed for required files
 		package.path = package.path .. ";" .. parameters.projectRoot .. "/" .. parameters.testDir .. "/?.lua"
 	
+		-- Run test suite for this project
 		local filePath = parameters.projectRoot .. "/" .. tostring(parameters.testDir) .. "/" .. tostring(parameters.testFile) .. ".lua"
 		print("Running test suites from file " .. filePath .. "...")
 		local testMain = assert(loadfile(filePath)(parameters.projectRoot), "Failed to open file " .. filePath)
+		
+		-- Try to detect failed tests
 		local exitCode = testMain()
 		print("luaunit exitCode = " .. exitCode)
 		assert(exitCode == 0, "Unit tests failed")
