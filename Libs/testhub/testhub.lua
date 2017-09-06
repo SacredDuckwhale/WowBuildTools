@@ -48,8 +48,8 @@ function TestHub:Run() -- Actual script begins here
 		
 		-- Try to detect failed tests
 		local exitCode = testMain()
-		print("luaunit exitCode = " .. exitCode)
-		assert(exitCode == 0, "Unit tests failed")
+--		print("luaunit exitCode = " .. exitCode .. "= NUMBER OF ERRORS")
+		assert(exitCode == 0, "Unit tests failed because there were errors")
 		
 	end
 	
