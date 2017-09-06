@@ -10,6 +10,9 @@ local TestHub = {}
 local args = { ... }
 
 
+-- Mock environment
+require("Utils/mock_wowapi")
+require("Utils/mock_luaenv")
 
 
 --- Starts the parsing process with the given settings
