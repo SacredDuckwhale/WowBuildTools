@@ -31,6 +31,16 @@ function TestHub:Run() -- Actual script begins here
 		-- Append lua path so that the project folder is browsed for required files
 		package.path = package.path .. ";" .. parameters.projectRoot .. "/" .. parameters.testDir .. "/?.lua"
 	
+		-- Drop previously created tests to avoid misleading errors
+		for k, v in pairs(_G) do -- Drop the entry if it's a table/function and starts with "Test" (luaunit scans for this criteria)
+
+			if k:match("Test") and (type(v) == "table" or type(v) == "function") then -- Is test suite that was created by other projects -> Drop it
+--				print("Dropping test suite with key = " .. k)
+				_G[k] = nil
+			end
+
+		end
+		
 		-- Run test suite for this project
 		local filePath = parameters.projectRoot .. "/" .. tostring(parameters.testDir) .. "/" .. tostring(parameters.testFile) .. ".lua"
 		print("Running test suites from file " .. filePath .. "...")
