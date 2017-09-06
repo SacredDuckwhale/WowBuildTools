@@ -52,6 +52,10 @@ function TestHub:Run() -- Actual script begins here
 
 		end
 		
+		-- Clear global and addon tables to create a blank slate
+		G = {} -- Global environment 
+		L = {} -- Localization table
+		T = {} -- Addon table		
 		
 		-- Parse TOC contents and add files to the global mock environment
 		local path = parameters.projectRoot
