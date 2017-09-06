@@ -17,6 +17,7 @@ function script:GetArgs(project, config, silent)
 	args.testDir = project.testDir or ""
 	args.testFile = project.testFile or ""
 	args.projectRoot = project.root or "."
+	args.projectName = string.match(project.root, ".*/(.+)$") -- TODO
 	
 	return args
 

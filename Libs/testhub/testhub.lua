@@ -4,11 +4,22 @@
 -- -----
 
 -- Libraries
-local CLI = WBT.CLI
+luaunit = require("Libs/testhub/luaunit")
 
 local TestHub = {}
 local args = { ... }
 
+-- Required WBT modules
+local CLI = WBT.CLI
+local TOC = WBT.TOC
+
+-- Helper functions
+local inspect = require('Libs/utils/inspect')
+function dump(value)
+
+	print(inspect(value))
+
+end
 
 -- Mock environment
 require("MockUps/mock_wowapi")
@@ -40,6 +51,19 @@ function TestHub:Run() -- Actual script begins here
 			end
 
 		end
+		
+		
+		-- Parse TOC contents and add files to the global mock environment
+		local path = parameters.projectRoot
+		local root = "..\\"  -- path from tests subfolder to addon root dir
+		local toc = parameters.projectName .. ".toc"
+
+		-- Set global variable used for mock API and ReadTOC (TODO: This needn't be -> Find a better solution)
+		-- Set globals that are accessed by the mock APIs (only those that are needed by this addon's test suite)
+		addonName = parameters.projectName
+		
+		-- Read TOC file and 
+		TOC:Read((path and path .. "/") or root, toc)
 		
 		-- Run test suite for this project
 		local filePath = parameters.projectRoot .. "/" .. tostring(parameters.testDir) .. "/" .. tostring(parameters.testFile) .. ".lua"
