@@ -44,8 +44,38 @@ Projects = {
 		},
 		["defaultLocale"] = "enGB",
 		["testDir"] = "Tests",
-		["testFile"] = "test",
+		["testFile"] = "run",
 	},
+	
+	["Wisent"] = {
+		["root"] = "F://GitHub/Wisent",
+		["exclusions"] = { -- TODO: Are they even used somewhere?
+			-- Folders
+			"_DEV",
+			"Docs",
+			"Libs",
+			"Tests",
+			"Locales",
+			".git",
+		},
+		["defaultLocale"] = "enUS",
+	},
+	
+	["AltMastery"] = {
+		["root"] = "F://GitHub/AltMastery",
+		["exclusions"] = { -- TODO: Are they even used somewhere?
+			-- Folders
+			"_DEV",
+			"Docs",
+			"Libs",
+			"Tests",
+			"Locales",
+			".git",
+		},
+		["defaultLocale"] = "enGB",
+		["testDir"] = "Tests",
+		["testFile"] = "RunTests",
+	}
 	
 }
 
