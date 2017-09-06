@@ -1,6 +1,6 @@
 -- Basic TOC file reader to extract addon files (and embedded libraries) from the table of contents
 -- Adds them to the mock environment, so that they can be used for unit tests
-
+-- TODO: Move to libs/utils
 local TOC = {}
 
 -- Read TOC file and load all addon-specific lua and xml files (will extract embeds, but not parse actual XML)
