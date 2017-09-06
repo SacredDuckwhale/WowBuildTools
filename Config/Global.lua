@@ -43,6 +43,8 @@ Projects = {
 			".git",
 		},
 		["defaultLocale"] = "enGB",
+		["testDir"] = "Tests",
+		["testFile"] = "test",
 	},
 	
 }
