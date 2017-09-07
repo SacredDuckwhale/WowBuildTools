@@ -106,6 +106,16 @@ GetSpecialization = function()
 	
 end
 
+GetAchievementInfo = function(achievementOrCategoryID, index)
+
+	local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy 
+
+	local _
+	
+	return 0, "AchievementName", 0, false, nil, nil, nil, "AchievementDescription", 0x00, "IconPath", "RewardText", false, false, nil 
+	
+end
+
 -- WOW API objects
 GameTooltip = {}
 function GameTooltip:HookScript(triggerEvent, scriptFunction)
