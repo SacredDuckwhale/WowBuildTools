@@ -106,6 +106,14 @@ GetSpecialization = function()
 	
 end
 
+IsQuestFlaggedCompleted = function(questID)
+
+	--print("Called IsQuestFlaggedCompleted with questID " .. tostring(questID))
+	if questID == 24545 then return true end -- "The Sacred and the Corrupt (for testing purposes only)
+	return false
+
+end
+
 GetAchievementInfo = function(achievementOrCategoryID, index)
 
 	local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy 
