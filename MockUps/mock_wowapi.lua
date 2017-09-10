@@ -124,6 +124,18 @@ GetAchievementInfo = function(achievementOrCategoryID, index)
 	
 end
 
+GetBuildInfo = function()
+	
+	-- Taken from the actual 7.3 client (not that it matters for testing whether or not this info is outdated...)
+	version = "7.3.0"
+	build = "24974"
+	date = "Sep 5 2017"
+	tocversion = 70300
+
+	return version, build, date, tocversion
+	
+end
+
 -- WOW API objects
 GameTooltip = {}
 function GameTooltip:HookScript(triggerEvent, scriptFunction)
