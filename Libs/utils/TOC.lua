@@ -4,33 +4,52 @@
 local TOC = {}
 
 
-local addonFiles, libraries
-
 --. Read XML file and keep reading until no further nested XML files were found
 -- This is used to load library dependencies that are not part of the actual addon
-function TOC:ParseXML(path, file)
+-- TODO: Clean up this giant mess (too lazy right now)
+function TOC:ParseXML(path, file, addonFiles, libraries, addToPath)
 
-	local xmlFile = assert(io.open(path .. file, "r") or io.open(file), "Could not open " .. file)
+print("Path = " .. path)
+print("File = " .. file)
+print("Prefix = " .. (addToPath or "<none>"))
+
+	print("Parsing XML file: " .. path .. file)
+
+	local xmlFile = assert(io.open(path .. file, "r") or io.open(file) or io.open((addToPath or "") .. path .. file), "Could not open " .. file)
 	local text = xmlFile:read("*all")
 	xmlFile:close()
 	
-	local pattern = "<Script%sfile=\"(.-)\"/>"
+	local luaPattern = "<Script%sfile=\"(.-)\"/>"
 	local folder = file:match("(.+)\\.-%.xml") .. "\\"
 	
 	print("Changed directory: " .. folder)
 	print("Detected XML file: " .. file)
 	
-	for embeddedFile in string.gmatch(text, pattern) do
+	local xmlPattern = "[^%-]<Include%sfile=\"(.-)\"/>"
 	
-		if file:match("Libs\\") then -- embedded library -> add to Libs
+--	print(); dump(string.match(text, xmlPattern)); print()
+	for nestedFile in string.gmatch(text, xmlPattern) do -- Extract XML files to load recursively, as they could contain further .lua files (usually library dependencies)
+		print("-----" .. nestedFile)
+	--	if not isCommentedOut then -- Isn't commented out and must be added
+			print("Recursing to check out nested file: " .. folder .. nestedFile)
+			TOC:ParseXML(path .. folder, nestedFile, addonFiles, libraries, folder)
+	--	else
+	--		print("----- Skipped entry " .. nestedFile .. " because it was commented out")
+	--	end
 		
-			libraries[#libraries+1] = folder .. embeddedFile
-			print("Adding embedded file: " .. folder .. embeddedFile .. " (position: " .. #libraries .. ")")
+	end
+	
+	for embeddedFile in string.gmatch(text, luaPattern) do -- Extract lua files to load directly (could be addon files, or embedded library files)
+	
+		if file:match("Libs\\") or addToPath and addToPath:match("Libs\\") then -- embedded library -> add to Libs
+		
+			libraries[#libraries+1] = (addToPath or "") .. folder .. embeddedFile
+			print("Adding embedded file: " .. (addToPath or "") .. folder .. embeddedFile .. " (position: " .. #libraries .. ")")
 		
 		else -- embedded addon file (localization etc) -> add to addonFiles
 		
-			addonFiles[#addonFiles+1] = folder .. embeddedFile
-			print("Adding embedded file: " .. folder .. embeddedFile .. " (position: " .. #addonFiles .. ")")
+			addonFiles[#addonFiles+1] = (addToPath or "") .. folder .. embeddedFile
+			print("Adding embedded file: " .. (addToPath or "") .. folder .. embeddedFile .. " (position: " .. #addonFiles .. ")")
 			
 		end
 		
@@ -43,7 +62,7 @@ end
 function TOC:Read(path, toc) -- TODO: Split this up into TOC Parser and Lua Loader; TODO: toc is actually the fileName, and path is the filePath
 
 	-- Reset files in case another project has been parsed prior to this one
-	addonFiles, libraries = {}, {}
+	local addonFiles, libraries = {}, {}
 
 	-- Read TOC file
 	print("Opening file: " .. toc .. "\n")
@@ -66,8 +85,8 @@ function TOC:Read(path, toc) -- TODO: Split this up into TOC Parser and Lua Load
 				
 			else -- .xml file -> parse and add files that are included instead
 
-				TOC:ParseXML(filePath, line)
-
+				TOC:ParseXML(filePath, line, addonFiles, libraries)
+				dump(libraries); dump(addonFiles)
 			end
 			
 		end
