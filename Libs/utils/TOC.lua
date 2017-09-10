@@ -3,12 +3,47 @@
 -- TODO: Move to libs/utils
 local TOC = {}
 
+
+local addonFiles, libraries
+
+--. Read XML file and keep reading until no further nested XML files were found
+-- This is used to load library dependencies that are not part of the actual addon
+function TOC:ParseXML(path, file)
+
+	local xmlFile = assert(io.open(path .. file, "r") or io.open(file), "Could not open " .. file)
+	local text = xmlFile:read("*all")
+	xmlFile:close()
+	
+	local pattern = "<Script%sfile=\"(.-)\"/>"
+	local folder = file:match("(.+)\\.-%.xml") .. "\\"
+	
+	print("Changed directory: " .. folder)
+	print("Detected XML file: " .. file)
+	
+	for embeddedFile in string.gmatch(text, pattern) do
+	
+		if file:match("Libs\\") then -- embedded library -> add to Libs
+		
+			libraries[#libraries+1] = folder .. embeddedFile
+			print("Adding embedded file: " .. folder .. embeddedFile .. " (position: " .. #libraries .. ")")
+		
+		else -- embedded addon file (localization etc) -> add to addonFiles
+		
+			addonFiles[#addonFiles+1] = folder .. embeddedFile
+			print("Adding embedded file: " .. folder .. embeddedFile .. " (position: " .. #addonFiles .. ")")
+			
+		end
+		
+	end
+
+end
+
+
 -- Read TOC file and load all addon-specific lua and xml files (will extract embeds, but not parse actual XML)
 function TOC:Read(path, toc) -- TODO: Split this up into TOC Parser and Lua Loader; TODO: toc is actually the fileName, and path is the filePath
 
-	-- Establish load order and assemble list of all addon files (by reading the TOC file)
-	local addonFiles = {}
-	local libraries = {}
+	-- Reset files in case another project has been parsed prior to this one
+	addonFiles, libraries = {}, {}
 
 	-- Read TOC file
 	print("Opening file: " .. toc .. "\n")
@@ -31,31 +66,8 @@ function TOC:Read(path, toc) -- TODO: Split this up into TOC Parser and Lua Load
 				
 			else -- .xml file -> parse and add files that are included instead
 
-				local xmlFile = assert(io.open(filePath .. line, "r") or io.open(line), "Could not open " .. line)
-				local text = xmlFile:read("*all")
-				xmlFile:close()
-				
-				local pattern = "<Script%sfile=\"(.-)\"/>"
-				local folder = line:match("(.+)\\.-%.xml") .. "\\"
-				
-				print("Changed directory: " .. folder)
-				print("Detected XML file: " .. line)
-				
-				for embeddedFile in string.gmatch(text, pattern) do
-				
-					if line:match("Libs\\") then -- embedded library -> add to Libs
-					
-						libraries[#libraries+1] = folder .. embeddedFile
-						print("Adding embedded file: " .. folder .. embeddedFile .. " (position: " .. #libraries .. ")")
-					
-					else -- embedded addon file (localization etc) -> add to addonFiles
-					
-						addonFiles[#addonFiles+1] = folder .. embeddedFile
-						print("Adding embedded file: " .. folder .. embeddedFile .. " (position: " .. #addonFiles .. ")")
-						
-					end
-					
-				end
+				TOC:ParseXML(filePath, line)
+
 			end
 			
 		end
