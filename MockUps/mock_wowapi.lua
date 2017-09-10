@@ -17,6 +17,10 @@ CreateFrame = function(frameType, frameName, parentFrameReference, inheritsFrame
 
 	end
 
+	function Frame:GetScript(widgetHandler)
+	
+	end
+	
 	return Frame
 
 end
