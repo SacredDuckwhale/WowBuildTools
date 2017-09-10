@@ -140,6 +140,12 @@ GetBuildInfo = function()
 	
 end
 
+hooksecurefunc =  function(tableOrObjectRef, functionName, hookFunction)
+
+	-- Simulation of taint / secure environment isn't really needed for this
+	
+end
+
 -- WOW API objects
 GameTooltip = {}
 function GameTooltip:HookScript(triggerEvent, scriptFunction)
