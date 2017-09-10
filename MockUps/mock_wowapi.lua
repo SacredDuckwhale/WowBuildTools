@@ -129,3 +129,6 @@ GameTooltip = {}
 function GameTooltip:HookScript(triggerEvent, scriptFunction)
 
 end
+
+-- Aliased Lua functions
+time = os.time
