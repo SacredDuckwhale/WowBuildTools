@@ -113,7 +113,14 @@ function TOC:Read(path, toc) -- TODO: Split this up into TOC Parser and Lua Load
 	for index, fileName in ipairs(addonFiles) do -- Attempt to load file 
 		
 		print(index, #G[addonName], fileName)
-		G[addonName][#G[addonName]+1] = loadfile(filePath .. fileName)(addonName, T)
+		
+		local chunk, err = loadfile(filePath .. fileName)
+		if err then error(err) 
+		else
+			
+			G[addonName][#G[addonName]+1] = chunk(addonName, T)
+		
+		end
 		
 	end
 	--dump(G[addonName])
