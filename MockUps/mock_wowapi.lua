@@ -28,6 +28,11 @@ end
 
 
 -- WOW API functions
+geterrorhandler = function(value)
+	print(tostring(value))
+	return print
+end
+
 GetAddOnMetadata = function(addon, value)
 	
 	if addon == addonName then
