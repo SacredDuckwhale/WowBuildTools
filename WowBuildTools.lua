@@ -14,7 +14,7 @@
 ----------------------------------------------------------------------------------------------------------------------
 
 --- WBT Loader
-
+-- Checks external dependencies and starts the WBT main module. Also provides the global environment used by the program 
 
 -- Global functions - TODO: Move elsewhere?
 function dump(value)
