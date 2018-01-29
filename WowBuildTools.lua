@@ -15,9 +15,11 @@
 
 --- WBT Loader
 
--- Read command line arguments
-local args = ...
 
+-- Global functions - TODO: Move elsewhere?
+function dump(value)
+	print(inspect(value))
+end
 
 -- Load main module
 WBT = require("WBT")
@@ -32,12 +34,7 @@ local TOC = assert(loadfile("Libs/utils/TOC.lua") or loadfile("TOC.lua"), "Faile
 WBT.TOC = TOC()
 
 
--- Global functions (used across modules) - TODO: Move elsewhere?
-function dump(value)
 
-	print(inspect(value))
-
-end
 
 
 -- Execute main module
